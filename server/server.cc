@@ -21,11 +21,29 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <bitset>
 #include <vector>
 #include <thread>
+#include <sqlite3.h> 
+#include <ibsss_database.h> 
+
 /*
 Initializes a multithreaded ISBBB server
 Takes a port and and address 
 Returns a socket descriptor for the server
 */
+
+class Client_Handle{
+public:
+
+	Client_Handle();
+	void initClientHandle();		
+
+private:
+	int client_token;
+};
+
+Client_Handle::Client_Handle(){
+	
+}
+
 int initServer(struct sockaddr_in * server_address, int main_port){
 
 	int main_socket = socket(AF_INET, SOCK_STREAM, 0);
@@ -46,6 +64,11 @@ int initServer(struct sockaddr_in * server_address, int main_port){
 	return main_socket;
 }
 
+/*
+Handles each client connection
+Takes client structure
+returns none
+*/
 void clientManager(int client_descriptor){
 	
 	char message_buffer[256];
@@ -84,17 +107,23 @@ void runConnectionManager(int main_socket){
 }
 
 int main(int argc, char *argv[]){
-
+	
 	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_OPCODES)
 		printOpCodes();
 	
 
 	int main_socket, main_port;
 	struct sockaddr_in server_address;
+	sqlite3 *db;
 
 	main_port = IBSSS_DEFAULT_PORT;	
 	if (argc >= 2)
 		main_port = atoi(argv[1]);
+
+	if(sqlite3_open(IBSSS_DATABASE_FILE_PATH, &db)){
+		sqlite3_close(db);
+		ibsssError("failed to establish database connection");
+	}
 
 	main_socket = initServer(&server_address, main_port);
 	
