@@ -4,7 +4,7 @@ DEBUG = -g
 CFLAGS = -Wall -c $(DEBUG)
 LFLAGS = -Wall $(DEBUG)
 SERVER_DIR = server/
-CLIENT_DIR = server/
+CLIENT_DIR = client/
 IBSSS : $(OBJS)
     $(CC) $(LFLAGS) $(OBJS) -o p1
 
