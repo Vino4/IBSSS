@@ -8,7 +8,7 @@ This client the following:
 Authors:
 Matt Almenshad | Andrew Gao | Jenny Horn 
 */
-#include "client.h"
+#include "client.hh"
 #include "ibsss_op_codes.h"
 #include <stdio.h>
 #include <stdlib.h>

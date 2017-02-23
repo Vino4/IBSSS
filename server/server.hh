@@ -1,5 +1,5 @@
-#ifndef _MAIN_CLIENT_HEADER
-#define _MAIN_CLIENT_HEADER
+#ifndef _MAIN_SERVER_HEADER
+#define _MAIN_SERVER_HEADER
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -15,12 +15,19 @@
 #define IBSSS_DEBUG_MESSAGES 0
 #define IBSSS_TRACE_OPCODES 1 
 
-#define IBSSS_DEFAULT_HOSTNAME "localhost"
 #define IBSSS_DEFAULT_PORT 4777
+#define IBSSS_MAXIMUM_BENDING_CONNECTIONS 40
 
 void ibsssError(const char *msg){
 	std::cerr << "ERROR: " << msg << std::endl;
 	exit(1);
 }
 
-#endif /*_MAIN_CLIENT_HEADER*/
+/*
+Initializes a multithreaded ISBBB server
+Takes a port and and address 
+Returns a socket descriptor for the server
+*/
+int initServer(struct sockaddr_in * server_address, int main_port);
+
+#endif /*_MAIN_SERVER_HEADER*/
