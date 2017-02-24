@@ -130,6 +130,7 @@ int main(int argc, char *argv[]){
 	runConnectionManager(main_socket);
 	
 	close(main_socket);
+	sqlite3_close(db);
 
 	return 0; 
 }
