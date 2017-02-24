@@ -23,6 +23,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <thread>
 #include <sqlite3.h> 
 #include <ibsss_database.h> 
+#include <ibsss_session_token.h> 
 
 /*
 Initializes a multithreaded ISBBB server
@@ -30,18 +31,43 @@ Takes a port and and address
 Returns a socket descriptor for the server
 */
 
+std::string generateToken(){
+
+}
+
 class Client_Handle{
 public:
 
 	Client_Handle();
-	void initClientHandle();		
+	void initClientSession(std::vector<Client_Handle> * container_reference);
+	void setClientDescriptor();
+	int getClientDescriptor();		
+	int isActive();		
 
 private:
-	int client_token;
+	
+	std::vector<Client_Handle> * container;
+	int client_descriptor;
+	std::thread thread_handle;
+	std::string ID;
+	std::string username;
+	std::string session_token;
+	int session_status;
 };
 
 Client_Handle::Client_Handle(){
-	
+	session_token = "\0";
+	username = "\0";
+	ID = "\0";
+	session_token = "\0";
+	client_descriptor = -1;
+	session_status = -1;
+}
+
+void Client_Handle::initClientSession(std::vector<Client_Handle> * container_reference, int descriptor){
+	container = container_reference;
+	client_descriptor = descriptor;
+	session_toekn = ;
 }
 
 int initServer(struct sockaddr_in * server_address, int main_port){
