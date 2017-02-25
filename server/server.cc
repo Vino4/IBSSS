@@ -24,7 +24,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <sqlite3.h> 
 #include <ibsss_database.h> 
 #include <ibsss_session_token.h> 
-
+#include <signal.h>
 /*
 Initializes a multithreaded ISBBB server
 Takes a port and and address 
@@ -38,7 +38,7 @@ class Client_Handle{
 public:
 
 	Client_Handle();
-	void initClientSession(std::vector<Client_Handle> * container_reference, int descriptor);
+	void initClientSession(std::vector<Client_Handle*> container_reference, int descriptor);
 	void setClientDescriptor(int descriptor);
 	int getClientDescriptor();		
 	int isActive();		
@@ -49,7 +49,7 @@ public:
 	std::string getSessionToken();
 private:
 	
-	std::vector<Client_Handle> * container;
+	std::vector<Client_Handle*> container;
 	int client_descriptor;
 	std::thread * thread_handle;
 	std::string ID;
@@ -67,13 +67,20 @@ void clientManager(Client_Handle * client_handle){
 	
 	unsigned char message_buffer[256];
 	unsigned int length = 0, client_descriptor = client_handle->getClientDescriptor();
+	int read_status, write_status;
 	for (;;){	
-		if (read(client_descriptor, &length, 4) < 0)
+		if ((read_status = read(client_descriptor, &length, 4)) < 0)
 	            ibsssError("failed to read");
 		
-		if (read(client_descriptor, message_buffer, length) < 0)
+		if ((read_status = read(client_descriptor, message_buffer, length)) < 0)
 	            ibsssError("failed to read");
 		
+		std::cout << "Read Status: " << read_status << std::endl;
+		
+		if (read_status == 0){
+			break;
+		}
+	
 		message_buffer[length] = '\0';		
 	
 		std::cout << "[" << client_handle->getSessionToken() << "]"
@@ -81,8 +88,14 @@ void clientManager(Client_Handle * client_handle){
 		<< message_buffer
 		<< std::endl;
 	
-		if (write(client_descriptor, "Fuck You!", 9) < 0)
+		if ((write_status = write(client_descriptor, "Fuck You!", 9)) < 0)
 	            ibsssError("failed to write");
+
+		std::cout << "Write Status: " << write_status << std::endl;
+		
+		if (write_status == 0){
+			break;
+		}
 	}
 	close(client_descriptor);
 }
@@ -125,7 +138,7 @@ void Client_Handle::generateToken(){
 
 }
 
-void Client_Handle::initClientSession(std::vector<Client_Handle> * container_reference, int descriptor){
+void Client_Handle::initClientSession(std::vector<Client_Handle*> container_reference, int descriptor){
 	container = container_reference;
 	client_descriptor = descriptor;
 	generateToken();
@@ -159,7 +172,7 @@ Takes a socked fd
 Returns none
 */
 void runConnectionManager(int main_socket){
-	std::vector<Client_Handle> connection_vector;
+	std::vector<Client_Handle*> connection_vector;
 	int client_descriptor;
 	struct sockaddr_in client_address;
 	socklen_t client_address_size;
@@ -167,15 +180,15 @@ void runConnectionManager(int main_socket){
 		if ((client_descriptor = accept(main_socket, (struct sockaddr *) &client_address
 								, &client_address_size)) < 0)
 			ibsssError("failed to accept incoming connection");
-		Client_Handle new_connection = new Client_Handle;
-		new_connection.initClientSession(&connection_vector, client_descriptor);	
+		Client_Handle * new_connection = new Client_Handle;
+		new_connection->initClientSession(connection_vector, client_descriptor);	
 		connection_vector.push_back(new_connection);
 	      if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_SESSIONS)
-	            std::cout << "Fully Initiated Session: [" << new_connection.getSessionToken() << "]" << std::endl;		
+	            std::cout << "Fully Initiated Session: [" << new_connection->getSessionToken() << "]" << std::endl;		
 	}
 	
 	for(unsigned int i = 0; i < connection_vector.size(); i++){
-		connection_vector[i].getThreadHandle()->join();	
+		connection_vector[i]->getThreadHandle()->join();	
 	} 
 }
 
@@ -202,7 +215,7 @@ int main(int argc, char *argv[]){
 	main_socket = initServer(&server_address, main_port);
 	
 	srand( time(0));
-	
+	signal(SIGPIPE, SIG_IGN);
 	runConnectionManager(main_socket);
 	
 	close(main_socket);
