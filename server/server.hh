@@ -12,8 +12,9 @@
 #include <bitset>
 #include "ibsss_op_codes.h"
 #include <errno.h>
-#define IBSSS_DEBUG_MESSAGES 0
-#define IBSSS_TRACE_OPCODES 1 
+#define IBSSS_DEBUG_MESSAGES 1 
+#define IBSSS_TRACE_OPCODES 0 
+#define IBSSS_TRACE_SESSIONS 1 
 
 #define IBSSS_DEFAULT_PORT 4777
 #define IBSSS_MAXIMUM_BENDING_CONNECTIONS 40

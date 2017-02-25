@@ -58,13 +58,31 @@ int main(int argc, char *argv[])
 	if (connect(main_socket,(struct sockaddr *) &server_address,sizeof(server_address)) < 0) 
 		ibsssError("failed to establish a connection to the server");
 
+	std::string input;
+
+	for (;;){
+		std::cin >> input;	
+		unsigned int length = input.size();	
+		std::cout << "Sending Length: " << length << std::endl;
+		if ((out = write(main_socket, &length, 4)) < 0)
+      	      ibsssError("failed to write");
+		
+		std::cout << "Sending input: " << input << std::endl;
+		if ((out = write(main_socket, input.c_str(), length)) < 0)
+      	      ibsssError("failed to write");
+	
+	      if ((out = read(main_socket, buffer, 9)) < 0)
+	            ibsssError("failed to read");	
+
+		std::cout << "Received: " <<  buffer << std::endl;
+	}
+/*
       if ((out = write(main_socket, &buffer, 6)) < 0)
             ibsssError("failed to write");
 
       if ((out = read(main_socket, buffer, 9)) < 0)
             ibsssError("failed to read");
-
-	std::cout << buffer << std::endl;
+*/
 
 	close(main_socket);
 	
