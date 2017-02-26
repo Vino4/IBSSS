@@ -10,7 +10,7 @@
 #include <netinet/in.h>
 #include <iostream>
 #include <bitset>
-#include "ibsss_op_codes.h"
+#include "ibsss_op_codes.hh"
 #include <errno.h>
 #define IBSSS_DEBUG_MESSAGES 0
 #define IBSSS_TRACE_OPCODES 1 

@@ -5,10 +5,9 @@ This file defines the opcodes for the IBSSS communication protocal
 Authors:
 Matt Almenshad | Andrew Gao | Jenny Horn
 */
-
-#ifndef _IBSSS_OP_CODES_HEADER
-#define _IBSSS_OP_CODES_HEADER
-
+#include "ibsss_op_codes.hh"
+#include <iostream>
+#include <bitset>
 
 const unsigned char IBSSS_OP_HELLO = 0 | 1 << 0;
 const unsigned char IBSSS_OP_CREATE_USER = 0 | 1 << 1;
@@ -51,6 +50,3 @@ void printOpCodes(){
 	<< std::bitset<8> (IBSSS_OP_FORGOT_USERNAME) 
 	<< std::endl; 
 }
-
-#endif /*_IBSSS_OP_CODES_HEADER*/
-

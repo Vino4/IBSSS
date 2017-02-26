@@ -9,7 +9,7 @@ Authors:
 Matt Almenshad | Andrew Gao | Jenny Horn 
 */
 #include "client.hh"
-#include "ibsss_op_codes.h"
+#include "ibsss_op_codes.hh"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -76,13 +76,6 @@ int main(int argc, char *argv[])
 
 		std::cout << "Received: " <<  buffer << std::endl;
 	}
-/*
-      if ((out = write(main_socket, &buffer, 6)) < 0)
-            ibsssError("failed to write");
-
-      if ((out = read(main_socket, buffer, 9)) < 0)
-            ibsssError("failed to read");
-*/
 
 	close(main_socket);
 	
