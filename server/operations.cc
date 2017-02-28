@@ -1,13 +1,13 @@
 
-#define IBSSS_CHECK_WRITE_STATUS if (IBSSS_TRACE_READ_WRITE_STATUS) \
-		std::cout << "Write Status: " << write_status << std::endl; \
-	if (write_status == 0){ \
+#define IBSSS_CHECK_WRITE_STATUS(status) if (IBSSS_TRACE_READ_WRITE_STATUS) \
+		std::cout << "Write Status: " << status << std::endl; \
+	if (status == 0){ \
 		break;\
 	} 
 
-#define IBSSS_CHECK_READ_STATUS if (IBSSS_TRACE_READ_WRITE_STATUS) \
-		std::cout << "Read Status: " << read_status << std::endl; \
-	if (read_status == 0){ \
+#define IBSSS_CHECK_READ_STATUS(status) if (IBSSS_TRACE_READ_WRITE_STATUS) \
+		std::cout << "Read Status: " << status << std::endl; \
+	if (status == 0){ \
 		break;\
 	}  
 
@@ -150,13 +150,13 @@ void Client_Handle::operationCreateUser() {
 	if((read_status = read(client_descriptor, &user_id_length, 4)) < 0) {
 		ibsssError("failed to read")
 	}
-	IBSSS_CHECK_READ_STATUS
+	IBSSS_CHECK_READ_STATUS(read_status)
 
 	// read user_id
 	if((read_status = read(client_descriptor, user_id, user_id_length)) < 0) {
 		ibsssError("failed to read")
 	}
-	IBSSS_CHECK_READ_STATUS
+	IBSSS_CHECK_READ_STATUS(read_status)
 
 	user_id[length] = '\0';
 
@@ -164,13 +164,13 @@ void Client_Handle::operationCreateUser() {
 	if((read_status = read(client_descriptor, &password_length, 4)) < 0) {
 		ibsssError("failed to read")
 	}
-	IBSSS_CHECK_READ_STATUS
+	IBSSS_CHECK_READ_STATUS(read_status)
 
 	// read password
 	if((read_status = read(client_descriptor, password, password_length)) < 0) {
 		ibsssError("failed to read")
 	}
-	IBSSS_CHECK_READ_STATUS
+	IBSSS_CHECK_READ_STATUS(read_status)
 
 	password[length] = '\0';	
 
@@ -178,13 +178,13 @@ void Client_Handle::operationCreateUser() {
 	if((read_status = read(client_descriptor, &email_length, 4)) < 0) {
 		ibsssError("failed to read")
 	}
-	IBSSS_CHECK_READ_STATUS
+	IBSSS_CHECK_READ_STATUS(read_status)
 
 	// read email
 	if((read_status = read(client_descriptor, email, user_length)) < 0) {
 		ibsssError("failed to read")
 	}
-	IBSSS_CHECK_READ_STATUS
+	IBSSS_CHECK_READ_STATUS(read_status)
 
 	email[length] = '\0';	
 
@@ -209,17 +209,17 @@ void Client_Handle::operationCreateUser() {
 		if ((write_status = write(client_descriptor, IBSSS_OP_SUCCESS, 1)) < 0)
 			ibsssError("failed to write");
 	
-			IBSSS_CHECK_WRITE_STATUS
+			IBSSS_CHECK_WRITE_STATUS(write_status)
 
 		if ((write_status = write(client_descriptor, getSessionToken(), 1)) < 0)
 			ibsssError("failed to write");
 
-			IBSSS_CHECK_WRITE_STATUS
+			IBSSS_CHECK_WRITE_STATUS(write_status)
 	} else {
 		if ((write_status = write(client_descriptor, IBSSS_OP_FAILURE, 1)) < 0)
 			ibsssError("failed to write");
 
-			IBSSS_CHECK_WRITE_STATUS
+			IBSSS_CHECK_WRITE_STATUS(write_status)
 	}
 }
 
@@ -235,13 +235,13 @@ void Client_Handle::operationLogin() {
 	if((read_status = read(client_descriptor, &user_id_length, 4)) < 0) {
 		ibsssError("failed to read")
 	}
-	IBSSS_CHECK_READ_STATUS
+	IBSSS_CHECK_READ_STATUS(read_status)
 
 	// read user_id
 	if((read_status = read(client_descriptor, user_id, user_id_length)) < 0) {
 		ibsssError("failed to read")
 	}
-	IBSSS_CHECK_READ_STATUS
+	IBSSS_CHECK_READ_STATUS(read_status)
 
 	user_id[length] = '\0';
 
@@ -249,13 +249,13 @@ void Client_Handle::operationLogin() {
 	if((read_status = read(client_descriptor, &password_length, 4)) < 0) {
 		ibsssError("failed to read")
 	}
-	IBSSS_CHECK_READ_STATUS
+	IBSSS_CHECK_READ_STATUS(read_status)
 
 	// read password
 	if((read_status = read(client_descriptor, password, password_length)) < 0) {
 		ibsssError("failed to read")
 	}
-	IBSSS_CHECK_READ_STATUS
+	IBSSS_CHECK_READ_STATUS(read_status)
 
 	password[length] = '\0';
 
@@ -279,17 +279,17 @@ void Client_Handle::operationLogin() {
 		if ((write_status = write(client_descriptor, IBSSS_OP_SUCCESS, 1)) < 0)
 			ibsssError("failed to write");
 	
-			IBSSS_CHECK_WRITE_STATUS
+			IBSSS_CHECK_WRITE_STATUS(write_status)
 
 		if ((write_status = write(client_descriptor, getSessionToken(), 1)) < 0)
 			ibsssError("failed to write");
 
-			IBSSS_CHECK_WRITE_STATUS
+			IBSSS_CHECK_WRITE_STATUS(write_status)
 	} else {
 		if ((write_status = write(client_descriptor, IBSSS_OP_FAILURE, 1)) < 0)
 			ibsssError("failed to write");
 
-			IBSSS_CHECK_WRITE_STATUS
+			IBSSS_CHECK_WRITE_STATUS(write_status)
 	}
 
 }

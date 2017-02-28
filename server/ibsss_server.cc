@@ -8,6 +8,8 @@ This server manages the following:
 Authors:
 Matt Almenshad | Andrew Gao | Jenny Horn 
 */
+
+#include "ibsss_database_handler.hh"
 #include "ibsss_client_handler.hh"
 #include "ibsss_server.hh"
 #include "ibsss_op_codes.hh"
@@ -32,8 +34,6 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 volatile sig_atomic_t IBSSS_SERVER_IS_ALIVE = 1;
 
 void ibsssSignalHandler(int signal_number){
-
-	
 	if (signal_number == SIGINT)
 		IBSSS_SERVER_IS_ALIVE = 0;
 
@@ -66,7 +66,6 @@ Returns:
       none
 */
 void Server_Handle::shutdown(){
-
 	IBSSS_SERVER_IS_ALIVE = 0;
 	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_TERMINATION)
 		std::cout << "\n\n{[=-....Terminating Server....-=]}" << std::endl;
@@ -77,7 +76,7 @@ void Server_Handle::shutdown(){
 		connections[0]->killSession();
 	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_TERMINATION)
 		std::cout << "\n\n{[=-....All Connections Have Been Terminated....-=]}" << std::endl;
-	sqlite3_close(db);
+	database_handle.close();
 	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_TERMINATION)
 		std::cout << "\n\n{[=-....Closed Database Connection....-=]}" << std::endl;
 }
@@ -137,12 +136,10 @@ void Server_Handle::init(int port){
 
 	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
 		ibsssError("Failed to set SIGPIPE handler");
-
-	if(sqlite3_open(IBSSS_DATABASE_FILE_PATH, &db)){
-		sqlite3_close(db);
-		ibsssError("failed to establish database connection");
-	}
 	
+	database_handle.configure();
+	database_handle.authenticateUser("root", "admin");
+
 	thread_handle = new std::thread(&Server_Handle::runConnectionManager, this, this);	
 
 	while (IBSSS_SERVER_IS_ALIVE != 0){
@@ -165,6 +162,7 @@ Returns:
       none
 */
 void Server_Handle::runConnectionManager(Server_Handle * server_handle){
+
 	IBSSS_SERVER_IS_ALIVE = 1;
 
 	int client_descriptor;

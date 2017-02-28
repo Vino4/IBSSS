@@ -1,6 +1,7 @@
 #ifndef _IBSSS_SERVER_HEADER
 #define _IBSSS_SERVER_HEADER
 
+#include "ibsss_database_handler.hh"
 #include "ibsss_client_handler.hh"
 #include "ibsss_server.hh"
 #include "ibsss_op_codes.hh"
@@ -42,7 +43,7 @@ class Server_Handle {
 		Server_Handle();
 	
 		/*
-		shutdown()
+		Server_Handle::shutdown()
 
 		Shut the server down.
 		Can be called with Ctrl + C interruption.
@@ -55,7 +56,7 @@ class Server_Handle {
 		void shutdown();
 
 		/*
-		setDescriptor(int descriptor)
+		Server_Handle::setDescriptor(int descriptor)
 	
 		Sets the server socket descriptor;
 		Will be used later to write to, read from and maanage the main server socket.
@@ -68,7 +69,7 @@ class Server_Handle {
 		void setDescriptor(int descriptor);
 
 		/*
-		init(int port)
+		Server_Handle::init(int port)
 	
 		Initalizes the server by
 			- Initalizing srand()
@@ -84,7 +85,7 @@ class Server_Handle {
 		void init(int port);
 
 		/*
-		runConnectionManager(Server_Handle * server_handle)
+		Server_Handle::runConnectionManager(Server_Handle * server_handle)
 
 		Manages server connections by:
 			- Accepting connection to the main server sucket
@@ -96,13 +97,15 @@ class Server_Handle {
 		      none
 		*/
 		void runConnectionManager(Server_Handle * server_handle);
+
+
 	private:
 
 		int main_socket, main_port;
 		struct sockaddr_in server_address;
 		std::thread * thread_handle;
 		std::vector<Client_Handle*> connections;
-		sqlite3 *db;
+		Database_Handle database_handle;
 };
 
 #endif /*_IBSSS_SERVER_HEADER*/

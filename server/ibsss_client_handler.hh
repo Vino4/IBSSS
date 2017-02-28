@@ -10,6 +10,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #ifndef _IBSSS_CLIENT_HANDLER_HEADER
 #define _IBSSS_CLIENT_HANDLER_HEADER
 
+#include "ibsss_restrictions.h"
 #include "ibsss_client_handler.hh"
 #include "ibsss_op_codes.hh"
 #include <stdio.h>
@@ -156,16 +157,84 @@ class Client_Handle{
 			none
 		*/
 		void initClientSession(std::vector<Client_Handle*> * connections, int descriptor);
+	
+		/*
+		establishLoggedinStatus()
+	
+		Enables the logged_in flag	
 		
+		Arguments:
+			none
+		Returns:
+			none
+		*/
+		void establishLoggedinStatus();	
+	
+		/*
+		establishLoggedoutStatus()
+	
+		Disables the logged_in flag	
+		
+		Arguments:
+			none
+		Returns:
+			none
+		*/
+		void establishLoggedoutStatus();
+
+		/*
+		setAESKey(std::string key)
+	
+		Sets the symetric encryption key	
+	
+		Arguments:
+			- std::string key, the symetric AES key	
+		Returns:
+			none
+		*/
+		void setAESKey(std::string key);
+
+		/*
+		Server_Handle::usernameIsValid()
+
+		Validates the username to ensure that:
+					- Username is not longer than IBSSS_GLOBAL_MAXIMUM_USERNAME_LENGTH
+					- Username is not shorter than IBSSS_GLOBAL_MINIMUM_USERNAME_LENGTH
+					- Username is composed of letters and numbers only
+		Arguments:
+			- std::string username
+		Returns:
+			int status
+				1: success
+				0: failure
+		*/
+		static int usernameIsValid(std::string username);
+
+		/*
+		Server_Handle::passwordIsValid()
+
+		Validates the password to ensure that:
+					- Password is not longer than IBSSS_GLOBAL_MAXIMUM_PASSWORD_LENGTH
+					- Password is not shorter than IBSSS_GLOBAL_MINIMUM_PASSWORD_LENGTH
+					- Password is composed of letters and numbers only
+		Arguments:
+			- std::string password 
+		Returns:
+			int status
+				1: success
+				0: failure
+		*/
+		static int passwordIsValid(std::string password);
 	private:
 		
 		std::vector<Client_Handle*> * connections;
 		int client_descriptor;
 		std::thread * thread_handle;
+		std::string AES_key;
 		std::string ID;
 		std::string username;
 		std::string session_token;
-		int session_status;
+		int logged_in;
 };
 	
 #endif /*_IBSSS_CLIENT_HANDLER_HEADER*/

@@ -6,6 +6,7 @@ This file defines the ibsss client handler class and functionlity
 Authors:
 Matt Almenshad | Andrew Gao | Jenny Horn 
 */
+#include "ibsss_restrictions.h"
 #include "ibsss_client_handler.hh"
 #include "ibsss_op_codes.hh"
 #include <stdio.h>
@@ -189,10 +190,11 @@ Client_Handle::Client_Handle(){
 	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_SESSIONS)
 		std::cout << "\n\n{[=-....Creating a new session....-=]}" << std::endl;
 	session_token = "\0";
+	AES_key = "\0";
 	username = "\0";
 	ID = "\0";
 	client_descriptor = -1;
-	session_status = -1;
+	logged_in = 0;
 }
 
 /*
@@ -217,6 +219,122 @@ void Client_Handle::generateToken(){
 	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_SESSIONS)
 		std::cout << "Created new session token: " << session_token << std::endl;
 
+}
+
+/*
+Client_Handle::establishLoggedoutStatus()
+
+Disables the logged_in flag
+
+Arguments:
+	none
+Returns:
+	none
+*/
+void Client_Handle::establishLoggedoutStatus(){
+
+	logged_in = 0;
+	
+	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_OPERATIONS)
+		std::cout 
+		<< "[" 
+		<< getSessionToken() 
+		<< "] is logged out" 
+		<< std::endl;
+
+}
+
+/*
+Client_Handle::establishLoggedinStatus()
+
+Enables the logged_in flag
+
+Arguments:
+	none
+Returns:
+	none
+*/
+void Client_Handle::establishLoggedinStatus(){
+
+	logged_in = 1;
+	
+	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_OPERATIONS)
+		std::cout 
+		<< "[" 
+		<< getSessionToken() 
+		<< "] is logged in" 
+		<< std::endl;
+
+}
+
+/*
+Client_Handle::setAESKey(std::string key)
+
+Sets the symetric encryption key    
+
+Arguments:
+	- std::string key, the symetric AES key   
+Returns:
+	none
+*/
+void Client_Handle::setAESKey(std::string key){
+
+	AES_key.assign(key);
+	
+	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_OPERATIONS)
+		std::cout 
+		<< "[" 
+		<< getSessionToken() 
+		<< "] assigned key: " 
+		<< AES_key 
+		<< std::endl;
+
+}
+
+/*
+Client_Handle::usernameIsValid()
+Validates the username to ensure that:
+	- Username is not longer than IBSSS_GLOBAL_MAXIMUM_USERNAME_LENGTH
+	- Username is not shorter than IBSSS_GLOBAL_MINIMUM_USERNAME_LENGTH
+	- Username is composed of letters and numbers only
+Arguments:
+	- std::string username
+Returns:
+	int status
+		1: success
+		0: failure
+*/
+int Client_Handle::usernameIsValid(std::string username){
+      int length = username.length();
+      if (length > IBSSS_GLOBAL_MAXIMUM_USERNAME_LENGTH || length < IBSSS_GLOBAL_MINIMUM_USERNAME_LENGTH)
+            return 0;
+      for(int i = 0; username[i];)
+            if (!std::isalnum(username[i++]))
+                  return 0;
+	return 1;
+}
+
+/*
+Client_Handle::passwordIsValid()
+Validates the password to ensure that:
+	- Password is not longer than IBSSS_GLOBAL_MAXIMUM_PASSWORD_LENGTH
+	- Password is not shorter than IBSSS_GLOBAL_MINIMUM_PASSWORD_LENGTH
+	- Password is composed of letters and numbers only
+Arguments:
+	- std::string password 
+Returns:
+	int status
+		1: success
+		0: failure
+*/
+int Client_Handle::passwordIsValid(std::string password){
+	int length = password.length();
+      if (length > IBSSS_GLOBAL_MAXIMUM_PASSWORD_LENGTH || length < IBSSS_GLOBAL_MINIMUM_PASSWORD_LENGTH)
+		return 0;
+	for(int i = 0; password[i];)
+		if (!std::isalnum(password[i++]))
+			return 0;
+	return 1;
 }
 
 /*
