@@ -210,9 +210,36 @@ Returns:
 		1: success
 		0: failure authentication failed 
 */
-int Database_Handle::changePassword(std::string username, std::string new_password, std::string old_password){
+int Database_Handle::changePassword(std::string username, std::string old_password, std::string new_password){
 
+	std::string update_statement = "UPDATE users SET password = lower('" 
+								+new_password
+								+"') WHERE username = lower('"
+								+username
+								+"') AND password = lower('"
+								+old_password
+								+"')"; 
 
+	if (
+		sqlite3_exec
+			(
+					database, 
+					update_statement.c_str(),
+					NULL, 
+					NULL, 
+					&exec_error
+			) 
+		!= SQLITE_OK
+	)
+	{
+		std::cout << "DATABASE ERROR: FAILED CHANGE PASSWORD - " << exec_error << std::endl;
+		return 0;
+	}
+
+	if (!sqlite3_changes(database))
+		return 0;
+
+	return 1;
 }
 
 /*
@@ -235,6 +262,10 @@ Returns:
 */
 int Database_Handle::resetPassword(std::string username, std::string email){
 
-
+	/*TODO:	- Create New Random Password
+			- Send New password to user's email
+			- Store New password hashed to database
+	*/
+	return 0;
 }
 

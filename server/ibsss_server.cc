@@ -138,7 +138,10 @@ void Server_Handle::init(int port){
 		ibsssError("Failed to set SIGPIPE handler");
 	
 	database_handle.configure();
-	database_handle.authenticateUser("root", "admin");
+	if(database_handle.authenticateUser("root", "admin"))
+		std::cout << "user authenticated" << std::endl;
+	if(database_handle.changePassword("root", "diedie", "admin"))
+		std::cout << "password changed" << std::endl;
 
 	thread_handle = new std::thread(&Server_Handle::runConnectionManager, this, this);	
 
@@ -150,7 +153,6 @@ void Server_Handle::init(int port){
 }
 
 /*
-Server_Handle::runConnectionManager()
 
 Manages server connections by:
 	- Accepting connection to the main server sucket
