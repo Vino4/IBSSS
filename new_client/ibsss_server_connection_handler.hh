@@ -1,17 +1,16 @@
 /* 
-IBSSS Client Handler Header
+IBSSS Server Connection Handler Header
 
-This file defines the ibsss client handler specifications
+This file defines the ibsss server connetion handler specifications
 
 Authors:
 Matt Almenshad | Andrew Gao | Jenny Horn 
 */
 
-#ifndef _IBSSS_CLIENT_HANDLER_HEADER
-#define _IBSSS_CLIENT_HANDLER_HEADER
-#include "ibsss_database_handler.hh"
+#ifndef _IBSSS_SERVER_CONNECTION_HANDLER_HEADER
+#define _IBSSS_SERVER_CONNECTION_HANDLER_HEADER
+
 #include "ibsss_restrictions.h"
-#include "ibsss_client_handler.hh"
 #include "ibsss_op_codes.hh"
 #include <stdio.h>
 #include <stdlib.h>
@@ -23,8 +22,6 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <iostream>
 #include <vector>
 #include <thread>
-#include <sqlite3.h>
-#include <ibsss_database.h>
 #include <ibsss_session_token.h>
 #include <ibsss_mutex.hh>
 #include <algorithm>
@@ -59,17 +56,17 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 	<< std::endl;
 
 /*
-Client Handle classs
-Used for managing each client connection
+Server Connection Handle classs
+Used for communicating with the main server 
 */
-class Client_Handle{
+class Server_Connection_Handle{
 
 	public:
 	
 		/*
-		Client_Handle()
+		Server_Connection_Handle()
 		
-		Initializes a client handle by:
+		Initializes a server connetion handle by:
 			- Setting all strings to '\0'
 			- Setting all status, descriptor and other integeral variables to -1 or 0 where needed
 		
@@ -82,10 +79,9 @@ class Client_Handle{
 		
 		/*
 		killSession()
-		**Thread Safe**
-		- Closes TCP connection
-		- Removes connection from connection manager
-		- Deletes client handle from memory
+			- Closes TCP connection
+			- Removes streams from stream manager
+			- Deletes server connetion handle from memory
 		
 		Arguments:
 			none
@@ -93,22 +89,6 @@ class Client_Handle{
 			none
 		*/
 		void killSession();
-		
-		/*
-		processConnection()
-		
-		Reads messages from the clients and responds by calling the appropriate handler functions.
-		Functions may respond by doing the following:
-			- Processing data (possibly from the ibsss database)
-			- Sending back responses
-			- Managing session states (possibly other sessions)
-			
-		Arguments:
-			none
-		Returns:
-			none
-		*/
-		void processConnection(Client_Handle * client_handle);
 		
 		/*
 		getSessionToken()
@@ -121,70 +101,43 @@ class Client_Handle{
 		std::string getSessionToken();
 		
 		/*
-		getThreadHandle()
-			
-		Arguments:
-			none
-		Returns:
-			thread pointer to the thread running the connection processing function	
-		*/
-		std::thread * getThreadHandle();
-		
-		/*
-		setClientDescriptor()
+		setConnectionDescriptor()
 		      
-		Sets client descriptor.
-		The descritor will be used to read and write messages to the client through a TCP socket.
+		Sets server connetion descriptor.
+		The descritor will be used to read and write messages to the server_connetion through a TCP socket.
 		
 		Arguments:
-		     int client descriptor 
+		     int server connetion descriptor 
 		Returns:
 			none
 		*/
-		void setClientDescriptor(int descriptor);
+		void setConnectionDescriptor(int descriptor);
 		
 		/*
-		getClientDescriptor()
+		getConnectionDescriptor()
 			
-		Returns client decritpor which can be used to read to, write from and manage a TCP socket.
+		Returns server connetion decritpor which can be used to read to, write from and manage a TCP socket.
 		
 		Arguments:
 			none
 		Returns:
-			int client descriptor	
+			int server connetion descriptor	
 		*/
-		int getClientDescriptor();
+		int getConnectionDescriptor();
 		
 		/*
-		generateToken()
+		initSession()
 		
-		Creates a randomized string from the characters defined in char IBSSS_SESSION_TOKEN_ALLOWED_CHARACTERS[]
-		The maximum index for the array must be defined as IBSSS_SESSION_TOKEN_CHARACTER_POOL_SIZE
-		The token size length must be globally defined as IBSSS_SESSION_TOKEN_LENGTH
-		
-		Arguments:
-			none
-		Returns:
-			none
-		*/
-		void generateToken();
-		
-		/*
-		initClientSession()
-		
-		Initialize the client session by:
+		Initialize the server connetion session by:
 			- Setting the appropriate session variables
-			- Generating session token
-			- Starting session thread
-		
+			- Sends operation hello to the server
+			- Establishing the secure link
 		Arguments:
-			- std::vector<Client_Handle*> * connection_manager, 
-									a pointer to a vector referencing all client handles
-			- int descriptor, socket descriptor to be used for writing to, reading from and managing a connection
+			none
 		Returns:
 			none
 		*/
-		void initClientSession(std::vector<Client_Handle*> * connections, int descriptor);
+		void initSession();
 	
 		/*
 		Client_Handle::establishSecuredStatus()
@@ -269,7 +222,7 @@ class Client_Handle{
 		/*
 		Client_Handle::operationHello()
 
-		Initiates client handshake
+		Initiates server_connetion handshake
 
 		Receives (in order):
 			- (int) AES Key Length
@@ -492,16 +445,12 @@ class Client_Handle{
 		void operationForgotUsername();
 	private:
 		
-		Database_Handle database_handle;
-		std::vector<Client_Handle*> * connections;
-		int client_descriptor;
-		std::thread * thread_handle;
+		int server_connetion_descriptor;
 		std::string AES_key;
-		std::string ID;
 		std::string username;
 		std::string session_token;
 		int secured_status;
 		int logged_in_status;
 };
 	
-#endif /*_IBSSS_CLIENT_HANDLER_HEADER*/
+#endif /*_IBSSS_SERVER_CONNECTION_HANDLER_HEADER*/

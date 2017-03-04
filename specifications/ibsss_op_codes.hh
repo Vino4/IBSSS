@@ -12,15 +12,17 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <iostream>
 #include <bitset>
 
-extern const unsigned char IBSSS_OP_HELLO;
-extern const unsigned char IBSSS_OP_CREATE_USER;
-extern const unsigned char IBSSS_OP_LOGIN;
-extern const unsigned char IBSSS_OP_LOGOUT;
-extern const unsigned char IBSSS_OP_REQUEST_STREAM_LINKS;
-extern const unsigned char IBSSS_OP_REQUEST_STREAM_KEY;
-extern const unsigned char IBSSS_OP_CHANGE_PASSWORD;
-extern const unsigned char IBSSS_OP_FORGOT_PASSWORD;
-extern const unsigned char IBSSS_OP_FORGOT_USERNAME;
+const unsigned char IBSSS_OP_HELLO = 0 | 1 << 0;
+const unsigned char IBSSS_OP_CREATE_USER = 0 | 1 << 1;
+const unsigned char IBSSS_OP_LOGIN = 0 | 1 << 2;
+const unsigned char IBSSS_OP_LOGOUT = 0 | 1 << 2 | 1 << 0;
+const unsigned char IBSSS_OP_REQUEST_STREAM_LINKS = 0 | 1 << 3;
+const unsigned char IBSSS_OP_REQUEST_STREAM_KEY = 0 | 1 << 4;
+const unsigned char IBSSS_OP_CHANGE_PASSWORD = 0 | 1 << 5;
+const unsigned char IBSSS_OP_FORGOT_PASSWORD = 0 | 1 << 6;
+const unsigned char IBSSS_OP_FORGOT_USERNAME = 0 | 1 << 7;
+const unsigned char IBSSS_OP_SUCCESS= 0 | 1 << 0;
+const unsigned char IBSSS_OP_FAILURE= 0;
 
 void printOpCodes();
 

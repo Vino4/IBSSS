@@ -1,4 +1,4 @@
-SERVER_OBJECTS = server.o ibsss_server.o ibsss_session_token.o ibsss_client_handler.o ibsss_error.o ibsss_mutex.o ibsss_op_codes.o ibsss_database_handler.o
+SERVER_OBJECTS = server.o ibsss_server.o ibsss_session_token.o ibsss_client_handler.o ibsss_error.o ibsss_mutex.o ibsss_op_codes.o ibsss_database_handler.o ibsss_client_operations.o
 CLIENT_OBJECTS = client.o
 CC = g++
 DEBUG = -g
@@ -28,6 +28,9 @@ ibsss_server.o : ibsss_client_handler.o
 	$(CC) $(CFLAGS) $(server_inc) $(addprefix $(server_dir), $(basename $@).cc)
 
 ibsss_client_handler.o :
+	$(CC) $(CFLAGS) $(server_inc) $(addprefix $(server_dir), $(basename $@).cc)
+
+ibsss_client_operations.o :
 	$(CC) $(CFLAGS) $(server_inc) $(addprefix $(server_dir), $(basename $@).cc)
 
 ibsss_database_handler.o :

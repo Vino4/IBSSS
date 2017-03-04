@@ -10,7 +10,6 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #ifndef _IBSSS_DATABASE_HANDLER_HEADER
 #define _IBSSS_DATABASE_HANDLER_HEADER
 
-#include "ibsss_client_handler.hh"
 #include "ibsss_op_codes.hh"
 #include <stdio.h>
 #include <stdlib.h>
