@@ -75,7 +75,7 @@ class Server_Connection_Handle{
 		Returns:
 			none
 		*/
-		Client_Handle();
+		Server_Connection_Handle();
 		
 		/*
 		killSession()
@@ -89,7 +89,17 @@ class Server_Connection_Handle{
 			none
 		*/
 		void killSession();
-		
+	
+		/*
+		setSessionToken()
+			
+		Arguments:
+			string session token with IBSSS_SESSION_TOKEN_LENGTH length
+		Returns:
+			none
+		*/
+		std::string setSessionToken();	
+
 		/*
 		getSessionToken()
 			
@@ -126,7 +136,7 @@ class Server_Connection_Handle{
 		int getConnectionDescriptor();
 		
 		/*
-		initSession()
+		connect()
 		
 		Initialize the server connetion session by:
 			- Setting the appropriate session variables
@@ -137,7 +147,7 @@ class Server_Connection_Handle{
 		Returns:
 			none
 		*/
-		void initSession();
+		void connect();
 	
 		/*
 		Client_Handle::establishSecuredStatus()

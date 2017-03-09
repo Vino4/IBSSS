@@ -4,6 +4,9 @@
 #include <QPixmap>
 //#include <QGraphicsScene>
 #include <QGraphicsPixmapItem>
+#include <QTimer>
+
+bool thing = true;
 
 StreamView::StreamView(QWidget *parent) :
     QMainWindow(parent),
@@ -13,29 +16,6 @@ StreamView::StreamView(QWidget *parent) :
 {
     ui->setupUi(this);
 
-    QPixmap file("cereal.jpeg"); //
-
-    /*if (file.isNull()){
-        QMessageBox::information(this, "titly", "OHNOITSGONE");
-    }
-    else
-        QMessageBox::information(this, "titly", "THEN WHAT THE HELL IS WRONG");
-    */
-
-//    int width = ui->graphicsView->geometry().width();
-//    int height = ui->graphicsView->geometry().height();
-    scene = new QGraphicsScene();
-    //scene = new QGraphicsScene(QRectF(0,0, width, height),0);
-
-//    QGraphicsPixmapItem *item = scene->addPixmap(file.scaled(QSize()))
- //   ui->graphicsView->fitInView(QRectF(0,0,width,height),Qt::KeepAspectRatio);
-    ui->graphicsView->setScene(scene);
-    //QGraphicsPixmapItem img(file);
-    scene->addPixmap(file);
-
-    QPixmap file2("bowlofcereal.jpeg");
-
-    scene->addPixmap(file2);
 
 /*    QWidget *centralWidget = new QWidget(this);
     QMenuBar *menu = new QMenuBar(centralWidget);
@@ -106,6 +86,33 @@ void StreamView::on_actionLog_out_triggered()
     //logout
 }
 
+void StreamView::loadImage(QPixmap file){
+    //QPixmap file("cereal.jpeg"); //
+
+    /*if (file.isNull()){
+        QMessageBox::information(this, "titly", "OHNOITSGONE");
+    }
+    else
+        QMessageBox::information(this, "titly", "THEN WHAT THE HELL IS WRONG");
+    */
+
+//    int width = ui->graphicsView->geometry().width();
+//    int height = ui->graphicsView->geometry().height();
+    scene = new QGraphicsScene();
+    //scene = new QGraphicsScene(QRectF(0,0, width, height),0);
+
+//    QGraphicsPixmapItem *item = scene->addPixmap(file.scaled(QSize()))
+ //   ui->graphicsView->fitInView(QRectF(0,0,width,height),Qt::KeepAspectRatio);
+    ui->graphicsView->setScene(scene);
+    //QGraphicsPixmapItem img(file);
+    scene->addPixmap(file);
+
+    //QPixmap file2("bowlofcereal.jpeg");
+
+    //scene->addPixmap(file2);
+
+}
+
 void StreamView::showSection(QAction *a){
     ui->stackedWidget->setCurrentIndex(a->data().toInt());
 
@@ -127,3 +134,21 @@ void StreamView::on_back_clicked()
     ui->stackedWidget->setCurrentIndex(0); //back to stream view
 }
 */
+
+void StreamView::on_changeImageButton_clicked()
+{
+        QTimer * timer = new QTimer(this);
+        connect(timer, &QTimer::timeout, [=]() {
+             thing = (!thing);
+             QPixmap file;
+             if (thing){
+                file = QPixmap("bowlofcereal.jpeg");
+             } else {
+                file = QPixmap("bowlofcereal2.jpeg");
+             }
+             QPixmap scaled = file.scaled(QSize(250, 188));
+             this->loadImage(scaled);
+          } );
+        timer->start(500);
+
+}

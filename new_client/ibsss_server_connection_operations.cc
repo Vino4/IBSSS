@@ -28,48 +28,12 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <algorithm>
 #include <ibsss_error.hh>
 
-
-int Client_Handle::operationHello(){
+int Server_Connection_Handle::operationHello(){
 	
-	// unsigned char AES_key[4096];
-	// unsigned int length = 0;
-	// int operation_successful = 0;
-	// int read_status, write_status;
-	
-	// //read the length of the key, if operation fails issue ibsssError	
-	// ibsssReadMessage(client_descriptor, &length, 4, read_status);
-
-	// //read the key	
-	// ibsssReadMessage(client_descriptor, AES_key, length, read_status);
-	
-	// //put string termination character at the end of the string	
-	// AES_key[length] = '\0';		
-
-	// //print what you received in the following format:
-	// //[session token][length of message (key in this case)]: message (key in this case)
-	// //format this however you want just make sure it's clear to help us debug	
-	// ibsssAnnounceMessage(getSessionToken(), length, AES_key);
-
-	// //set the client in the client's storage	
-	// setAESKey(std::string(AES_key, AES_key+length));
-
-	// establishSecuredStatus();
-	
-	// //flag success if you successed by changing the success variable to 1:
-	// operation_successful++;	
-	// //let the client now you were successful or that you failed base on the status
-	// if (operation_successful){
-	// 	ibsssWriteMessage(client_descriptor, &IBSSS_OP_SUCCESS, 1, write_status);
-	// } else {
-	// 	ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
-	// }
-
-
-	unsigned char AES_key;
+	unsigned char AES_key[4096];
 	unsigned int length = 0;
-	int operation_successful = 0;
 	int read_status, write_status;
-	char was_success;
+	char operation_status;
 
 	//TODO: generate AES key and send it
 	// make a fake AES key for now
@@ -78,88 +42,89 @@ int Client_Handle::operationHello(){
 
 	// Remeber the AES key
 	setAESKey(std::string(AES_key, AES_key+length));
+	
+	// Send Op Code to server
+	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_HELLO, 1, write_status);
 
 	// send length and aes_key
 	ibsssWriteMessage(server_connection_descriptor, &length, sizeof(length), write_status);
 	ibsssWriteMessage(server_connection_descriptor, AES_key, length, write_status);
 
-	ibsssReadMessage(server_connection_descriptor, &was_success, 1, read_status);
+	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
 
-	switch (wasSuccess) {
+	switch (operation_status) {
 		case IBSSS_OP_SUCCESS:
-		return 1 break;
+			establishSecuredStatus();
+			return 1;
 		case IBSSS_OP_FAILURE:
-		return 0 break;
+			return 0;
 	}
-
-
 }
 
+int Server_Connection_Handle::operationCreateUser(std::string username, std::string password, std::string email){
 
+	if (!secured_status)
+		return 0;
 
-int Client_Handle::operationCreateUser(char username[], char password[], char email[]) {
 	int read_status, write_status;
+	char operation_status;
 
-	if (!secured_status){
-		ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
-		return;
-	}
-
-	int username_length = strlen(username);
-	int password_length = strlen(password);
-	int email_length = strlen(email);
-
-	char was_success;
-
-	char session_token[];
+	int username_length = username.length();
+	int password_length = password.length();
+	int email_length = email.length();
+	
+	// Send Op Code to server
+	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_CREATE_USER, 1, write_status);
 
 	//send length of username	
 	ibsssWriteMessage(server_connection_descriptor, &username_length, sizeof(username_length), write_status);
 
 	//send username 
-	ibsssWriteMessage(server_connection_descriptor, username, username_length, write_status);
+	ibsssWriteMessage(server_connection_descriptor, username.c_str(), username_length, write_status);
 	
 	//send length of password
-	ibsssWriteMessage(server_connection_descriptor, &password_length, sizeof(password, write_status));
+	ibsssWriteMessage(server_connection_descriptor, &password_length, sizeof(password), write_status);
 
 	//send password
-	ibsssWriteMessage(server_connection_descriptor, password, password_length, write_status);
+	ibsssWriteMessage(server_connection_descriptor, password.c_str(), password_length, write_status);
 
 	//send length of email
 	ibsssWriteMessage(server_connection_descriptor, &email_length, sizeof(email_length), write_status);
 
 	//send email
-	ibsssWriteMessage(server_connection_descriptor, email, email_length, write_status);
+	ibsssWriteMessage(server_connection_descriptor, email.c_str(), email_length, write_status);
 
 
 	// read what server returns
-	ibsssReadMessage(server_connection_descriptor, &was_success, 1, read_status);
+	ibsssReadMessage(server_connection_descriptor, &opertiaon_status, 1, read_status);
 
-	switch (wasSuccess) {
+	switch (operation_status) {
 		case IBSSS_OP_SUCCESS:
-		ibsssReadMessage(server_connection_descriptor,session_token, IBSSS_SESSION_TOKEN_LENGTH, read_status);
-		setSessionToken(std::string(session_token));
-		return 1 break;
+			session_token.resize(IBSSS_SESSION_TOKEN_LENGTH);
+			ibsssReadMessage(server_connection_descriptor, &session_token[0], IBSSS_SESSION_TOKEN_LENGTH, 
+						read_status);
+			establishLoggedinStatus();
+			return 1;
 		case IBSSS_OP_FAILURE:
-		return 0 break;
+			return 0;
 	}
 }
 
 
 
-void Client_Handle::operationLogin(char username[], char password[]) {
+void Server_Connection_Handle::operationLogin(std::string username, std::string password) {
+
+	if(!secured_status)
+		return 0;
 	
 	int read_status, write_status;
-	
-	if(!secured_status){
-		ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
-		return;
-	}
+	char operation_status;
 
-	int username_length = strlen(username);
-	int password_length = strlen(password);
-	char was_success;
-	char session_token[];
+	int username_length = username.length();
+	int password_length = password.length();
+	
+	// Send Op Code to server
+	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_LOGIN, 1, write_status);
 
 	//send username length
 	ibsssWriteMessage(server_connection_descriptor, &username_length, sizeof(username_length), write_status);
@@ -174,20 +139,22 @@ void Client_Handle::operationLogin(char username[], char password[]) {
 	ibsssWriteMessage(server_connection_descriptor, password, password_length, write_status);		
 
 	// read what server returns
-	ibsssReadMessage(server_connection_descriptor, &was_success, 1, read_status);
+	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
 
-	switch (wasSuccess) {
+	switch (operation_success) {
 		case IBSSS_OP_SUCCESS:
-		ibsssReadMessage(server_connection_descriptor,session_token, IBSSS_SESSION_TOKEN_LENGTH, read_status);
-		setSessionToken(std::string(session_token));
-		return 1 break;
+			session_token.resize(IBSSS_SESSION_TOKEN_LENGTH);
+			ibsssReadMessage(server_connection_descriptor, &session_token[0], IBSSS_SESSION_TOKEN_LENGTH, 
+						read_status);
+			establishLoggedinStatus();
+			return 1;
 		case IBSSS_OP_FAILURE:
-		return 0 break;
+			return 0;
 	}
 }
 
 /*
-Client_Handle::operationLogout()
+Server_Connection_Handle::operationLogout()
 
 creates a new user with login details
 
@@ -207,40 +174,36 @@ Arguments:
 Returns:
 	none
 */
-void Client_Handle::operationLogout() {
+int Server_Connection_Handle::operationLogout() {
+
+	if (!secured_status)
+		return 0;
 
 	int read_status, write_status;
+	char operation_status;
+	
+	// Send Op Code to server
+	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_LOGOUT , 1, write_status);
 
-	if (!secured_status){
-		ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
-		return;
+	// Send Session token to server
+	ibsssWriteMessage(server_connection_descriptor, getSessionToken().c_str(), IBSSS_SESSION_TOKEN_LENGTH, 
+				write_status);
+
+	// read what server returns
+	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
+
+	switch (operation_success) {
+		case IBSSS_OP_SUCCESS:
+			establishLoggedoutStatus();
+			return 1;
+		case IBSSS_OP_FAILURE:
+			return 0;
 	}
-
-	char session_token[IBSSS_SESSION_TOKEN_LENGTH];
-
-
-	//read the session token, if operation fails issue ibsssError	
-	ibsssReadMessage(client_descriptor, session_token, IBSSS_SESSION_TOKEN_LENGTH, read_status);
-
-	//put string termination character at the end of the string	
-	session_token[IBSSS_SESSION_TOKEN_LENGTH] = '\0';		
-
-	ibsssAnnounceMessage(getSessionToken(), IBSSS_SESSION_TOKEN_LENGTH, session_token);
-
-	if(session_token == getSessionToken()){
-		ibsssWriteMessage(client_descriptor, &IBSSS_OP_SUCCESS, 1, write_status);
-		establishLoggedoutStatus();
-		killSession();
-		return;	
-	}
-
-	//let the client now you were successful or that you failed base on the status
-	ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
 }
 
 
 /*
-Client_Handle::operationRequestStreamLinks()
+Server_Connection_Handle::operationRequestStreamLinks()
 
 Sends links to all the streams to the user
 		
@@ -262,16 +225,14 @@ Arguments:
 Returns:
 	none
 */
-void Client_Handle::operationRequestStreamLinks(){
+int Server_Connection_Handle::operationRequestStreamLinks(){
 
-	int write_status;
-	//TODO request links from database and send to user
-	ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
-
+	//TODO impelement  
+	return 0;
 }
 
 /*
-Client_Handle::operationRequestStreamKey()
+Server_Connection_Handle::operationRequestStreamKey()
 
 Request stream key for a certain stream
 		
@@ -292,16 +253,14 @@ Arguments:
 Returns:
 	none
 */
-void Client_Handle::operationRequestStreamKey(){
+void Server_Connection_Handle::operationRequestStreamKey(){
 
-	int write_status;
-	//TODO request key for stream from database and send to user
-	ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
-
+	//TODO implement 
+	return 0;
 }
 
 /*
-Client_Handle::operationChangePassword()
+Server_Connection_Handle::operationChangePassword()
 
 creates a new user with login details
 		
@@ -326,72 +285,49 @@ Arguments:
 Returns:
 	none
 */
-void Client_Handle::operationChangePassword(){
+void Server_Connection_Handle::operationChangePassword(std::string username, std::string old_password, std::string new_password){
+	if (!secured_status)
+		return 0;
 
 	int read_status, write_status;
-
-	if (!secured_status){
-		ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
-		return;
-	}
 	
-	char username[256];
-	char old_password[256];
-	char new_password[256];
+	int username_length = username.length();
+	int old_password_length = old_password.length();
+	int new_password_length = new_password.length();
 
-	int username_length;
-	int old_password_length;
-	int new_password_length;
+	char operation_status;
 
-	int operation_successful = 0;
+	// Send Op Code to Server
+	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_CHANGE_PASSWORD, 1, write_status);
 
-	//read the length of the username, if operation fails issue ibsssError	
-	ibsssReadMessage(client_descriptor, &username_length, 4, read_status);
-
-	//read the username 
-	ibsssReadMessage(client_descriptor, username, username_length, read_status);
+	// send username length
+	ibsssWriteMessage(server_connection_descriptor, &username_length, sizeof(username_length), write_status);
+	// send username
+	ibsssWriteMessage(server_connection_descriptor, &username[0], username_length, write_status);
 	
-	//put string termination character at the end of the string	
-	username[username_length] = '\0';		
-
-	ibsssAnnounceMessage(getSessionToken(), username_length, username);
-
-	//read the length of the old password, if operation fails issue ibsssError	
-	ibsssReadMessage(client_descriptor, &old_password_length, 4, read_status);
-
-	//read the password 
-	ibsssReadMessage(client_descriptor, old_password, old_password_length, read_status);
+	// send old password length
+	ibsssWriteMessage(server_connection_descriptor, &old_password_length, sizeof(old_password_length), write_status);
+	// send old password 
+	ibsssWriteMessage(server_connection_descriptor, &old_password[0], old_password_length, write_status);
 	
-	//put string termination character at the end of the string	
-	old_password[old_password_length] = '\0';		
+	// send new password length
+	ibsssWriteMessage(server_connection_descriptor, &new_password_length, sizeof(new_password_length), write_status);
+	// send new_password
+	ibsssWriteMessage(server_connection_descriptor, &new_password[0], new_password_length, write_status);
 
-	ibsssAnnounceMessage(getSessionToken(), old_password_length, old_password);
+	// read what server returns
+	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
 
-	//read the length of the new password, if operation fails issue ibsssError	
-	ibsssReadMessage(client_descriptor, &new_password_length, 4, read_status);
-
-	//read the new password 
-	ibsssReadMessage(client_descriptor, new_password, new_password_length, read_status);
-	
-	//put string termination character at the end of the string	
-	new_password[new_password_length] = '\0';		
-
-	ibsssAnnounceMessage(getSessionToken(), new_password_length, new_password);
-
-	if(usernameIsValid(username) && passwordIsValid(old_password) && passwordIsValid(new_password))
-		if(database_handle.changePassword(username, old_password, new_password)){
-			operation_successful++;	
-		}
-	//let the client now you were successful or that you failed base on the status
-	if (operation_successful){
-		ibsssWriteMessage(client_descriptor, &IBSSS_OP_SUCCESS, 1, write_status);
-	} else {
-		ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
+	switch (operation_success) {
+		case IBSSS_OP_SUCCESS:
+			return 1;
+		case IBSSS_OP_FAILURE:
+			return 0;
 	}
 }
 
 /*
-Client_Handle::operationForgotPassword()
+Server_Connection_Handle::operationForgotPassword()
 
 Restore user password
 
@@ -414,16 +350,12 @@ Arguments:
 Returns:
 	none
 */
-void Client_Handle::operationForgotPassword(){
-
-	int write_status;
-	//TODO: create new password, store in database and send to user
-	ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
-
+void Server_Connection_Handle::operationForgotPassword(){
+	//TODO:Implement	
 }
 
 /*
-Client_Handle::operationForgotUsername()
+Server_Connection_Handle::operationForgotUsername()
 
 restore user's username
 		
@@ -444,7 +376,7 @@ Arguments:
 Returns:
 	none
 */
-void Client_Handle::operationForgotUsername(){
+void Server_Connection_Handle::operationForgotUsername(){
 
 	int write_status;
 	//TODO: send username to user's email

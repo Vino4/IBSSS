@@ -27,6 +27,8 @@ private slots:
     void showSection(QAction* a);
     void backToStreamview();
     //void on_back_clicked();
+    void loadImage(QPixmap file);
+    void on_changeImageButton_clicked();
 
 private:
     Ui::StreamView *ui;
