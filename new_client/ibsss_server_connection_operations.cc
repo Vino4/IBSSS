@@ -349,8 +349,52 @@ Arguments:
 Returns:
 	none
 */
-int Server_Connection_Handle::operationForgotPassword(){
-	//TODO:Implement	
+int Server_Connection_Handle::operationForgotPassword(std::string username, std::string email){
+	if (!secured_status)
+		return 0;
+
+	int read_status, write_status;
+
+	int username_length = username.length();
+	int password_length = password.length();
+
+	char operation_status;
+
+	//send op code to server
+	ibsssWriteMessage(server_connection_descriptor,&IBSSS_OP_FORGOT_PASSWORD, 1, write_status);
+
+	//send username length
+	ibsssWriteMessage(server_connection_descriptor, &username_length, sizeof(username_length), write_status);
+
+	//send username
+	ibsssWriteMessage(server_connection_descriptor, &username[0], username_length, write_status);
+
+	//send email length
+	ibsssWriteMessage(server_connection_descriptor, &email_length, sizeof(email_length), write_status);
+
+	//send email
+	ibsssWriteMessage(server_connection_descriptor, &email[0], email_length, write_status);
+
+	//read what server returns
+	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
+
+	switch (operation_status) {
+		case IBSSS_OP_SUCCESS:
+			return 1;
+		case IBSSS_OP_FAILURE:
+			return 0;
+	}
+
+}
+
+/*
+Server_Connection_Handle::operationForgotUsername()
+
+restore user's username
+		
+Receives: 
+	- (int) Email 
+	- char[Email Length] Email 
 }
 
 /*
@@ -375,10 +419,34 @@ Arguments:
 Returns:
 	none
 */
-int Server_Connection_Handle::operationForgotUsername(){
+int Server_Connection_Handle::operationForgotUsername(std::string email){
 
-	int write_status;
-	//TODO: send username to user's email
-	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
+	if (!secured_status)
+		return 0;
+
+	int read_status, write_status;
+
+	int email_length = email.length();
+
+	char operation_status;
+
+	//send op code to server
+	ibsssWriteMessage(server_connection_descriptor,&IBSSS_OP_FORGOT_USERNAME, 1, write_status);
+
+	//send email length
+	ibsssWriteMessage(server_connection_descriptor, &email_length, sizeof(email_length), write_status);
+
+	//send email
+	ibsssWriteMessage(server_connection_descriptor, &email[0], email_length, write_status);
+
+	//read what server returns
+	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
+
+	switch (operation_status) {
+		case IBSSS_OP_SUCCESS:
+			return 1;
+		case IBSSS_OP_FAILURE:
+			return 0;
+	}
 
 }
