@@ -28,7 +28,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 int Server_Connection_Handle::operationHello(){
 	
 	unsigned char AES_key[4096];
-	unsigned int length = 4;
+	unsigned int length = 0;
 	int read_status, write_status;
 	char operation_status;
 
@@ -41,7 +41,7 @@ int Server_Connection_Handle::operationHello(){
 
 	// Remeber the AES key
 	setAESKey(std::string(AES_key, AES_key+4));
-
+	
 	// Send Op Code to server
 	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_HELLO, 1, write_status);
 
@@ -57,8 +57,6 @@ int Server_Connection_Handle::operationHello(){
 			return 1;
 		case IBSSS_OP_FAILURE:
 			return 0;
-		default:
-			return -1;
 	}
 }
 
@@ -80,16 +78,15 @@ int Server_Connection_Handle::operationCreateUser(std::string username, std::str
 	//send length of username	
 	ibsssWriteMessage(server_connection_descriptor, &username_length, sizeof(username_length), write_status);
 
-
 	//send username 
 	ibsssWriteMessage(server_connection_descriptor, username.c_str(), username_length, write_status);
 	
 	//send length of password
-	ibsssWriteMessage(server_connection_descriptor, &password_length, sizeof(password_length), write_status);
+	ibsssWriteMessage(server_connection_descriptor, &password_length, sizeof(password), write_status);
 
 	//send password
 	ibsssWriteMessage(server_connection_descriptor, password.c_str(), password_length, write_status);
-	
+
 	//send length of email
 	ibsssWriteMessage(server_connection_descriptor, &email_length, sizeof(email_length), write_status);
 
@@ -105,13 +102,10 @@ int Server_Connection_Handle::operationCreateUser(std::string username, std::str
 			session_token.resize(IBSSS_SESSION_TOKEN_LENGTH);
 			ibsssReadMessage(server_connection_descriptor, &session_token[0], IBSSS_SESSION_TOKEN_LENGTH, 
 						read_status);
-			std::cout << "got session token: " << session_token << std::endl;
 			establishLoggedinStatus();
 			return 1;
 		case IBSSS_OP_FAILURE:
 			return 0;
-		default:
-			return -1;
 	}
 }
 
@@ -121,7 +115,6 @@ int Server_Connection_Handle::operationLogin(std::string username, std::string p
 
 	if(!secured_status)
 		return 0;
-
 	
 	int read_status, write_status;
 	char operation_status;
@@ -152,13 +145,10 @@ int Server_Connection_Handle::operationLogin(std::string username, std::string p
 			session_token.resize(IBSSS_SESSION_TOKEN_LENGTH);
 			ibsssReadMessage(server_connection_descriptor, &session_token[0], IBSSS_SESSION_TOKEN_LENGTH, 
 						read_status);
-			std::cout << "got session token: " << session_token << std::endl;
 			establishLoggedinStatus();
 			return 1;
 		case IBSSS_OP_FAILURE:
 			return 0;
-		default:
-			return -1;
 	}
 }
 
@@ -207,8 +197,6 @@ int Server_Connection_Handle::operationLogout() {
 			return 1;
 		case IBSSS_OP_FAILURE:
 			return 0;
-		default:
-			return -1;
 	}
 }
 
@@ -334,8 +322,6 @@ int Server_Connection_Handle::operationChangePassword(std::string username, std:
 			return 1;
 		case IBSSS_OP_FAILURE:
 			return 0;
-		default:
-			return -1;
 	}
 }
 
@@ -363,6 +349,10 @@ Arguments:
 Returns:
 	none
 */
+<<<<<<< HEAD
+int Server_Connection_Handle::operationForgotPassword(){
+	//TODO:Implement	
+=======
 int Server_Connection_Handle::operationForgotPassword(std::string username, std::string email){
 	if (!secured_status)
 		return 0;
@@ -370,7 +360,7 @@ int Server_Connection_Handle::operationForgotPassword(std::string username, std:
 	int read_status, write_status;
 
 	int username_length = username.length();
-	int email_length = email.length();
+	int password_length = password.length();
 
 	char operation_status;
 
@@ -392,14 +382,14 @@ int Server_Connection_Handle::operationForgotPassword(std::string username, std:
 	//read what server returns
 	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
 
-	switch (operation_status) {
+	switch (operation_success) {
 		case IBSSS_OP_SUCCESS:
 			return 1;
 		case IBSSS_OP_FAILURE:
 			return 0;
-		default:
-			return -1;
 	}
+
+>>>>>>> 393ae7abbf282ced3c9257711292f8df2b4153a7
 }
 
 /*
@@ -424,6 +414,13 @@ Arguments:
 Returns:
 	none
 */
+<<<<<<< HEAD
+int Server_Connection_Handle::operationForgotUsername(){
+
+	int write_status;
+	//TODO: send username to user's email
+	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
+=======
 int Server_Connection_Handle::operationForgotUsername(std::string email){
 
 	if (!secured_status)
@@ -447,13 +444,12 @@ int Server_Connection_Handle::operationForgotUsername(std::string email){
 	//read what server returns
 	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
 
-	switch (operation_status) {
+	switch (operation_success) {
 		case IBSSS_OP_SUCCESS:
 			return 1;
 		case IBSSS_OP_FAILURE:
 			return 0;
-		default:
-			return -1;
 	}
+>>>>>>> 393ae7abbf282ced3c9257711292f8df2b4153a7
 
 }

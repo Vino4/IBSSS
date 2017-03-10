@@ -118,9 +118,9 @@ void Client_Handle::operationCreateUser() {
 		return;
 	}
 	
-	char username[256];
-	char password[256];
-	char email[256];
+	std::string username;
+	std::string password;
+	std::string email;
 
 	int username_length;
 	int password_length;
@@ -132,7 +132,8 @@ void Client_Handle::operationCreateUser() {
 	ibsssReadMessage(client_descriptor, &username_length, 4, read_status);
 
 	//read the username 
-	ibsssReadMessage(client_descriptor, username, username_length, read_status);
+	username.resize(username_length);
+	ibsssReadMessage(client_descriptor, &username[0], username_length, read_status);
 	
 	//put string termination character at the end of the string	
 	username[username_length] = '\0';		
@@ -143,8 +144,9 @@ void Client_Handle::operationCreateUser() {
 	ibsssReadMessage(client_descriptor, &password_length, 4, read_status);
 
 	//read the password 
-	ibsssReadMessage(client_descriptor, password, password_length, read_status);
-	
+	password.resize(password_length);
+	ibsssReadMessage(client_descriptor, &password[0], password_length, read_status);
+		
 	//put string termination character at the end of the string	
 	password[password_length] = '\0';		
 
@@ -154,7 +156,8 @@ void Client_Handle::operationCreateUser() {
 	ibsssReadMessage(client_descriptor, &email_length, 4, read_status);
 
 	//read the email 
-	ibsssReadMessage(client_descriptor, email, email_length, read_status);
+	email.resize(email_length);
+	ibsssReadMessage(client_descriptor, &email[0], email_length, read_status);
 	
 	//put string termination character at the end of the string	
 	email[email_length] = '\0';		
@@ -166,9 +169,11 @@ void Client_Handle::operationCreateUser() {
 			establishLoggedinStatus();			
 			operation_successful++;	
 		}
+
 	//let the client now you were successful or that you failed base on the status
 	if (operation_successful){
 		ibsssWriteMessage(client_descriptor, &IBSSS_OP_SUCCESS, 1, write_status);
+		ibsssWriteMessage(client_descriptor, getSessionToken().c_str(), IBSSS_SESSION_TOKEN_LENGTH, write_status);
 	} else {
 		ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
 	}
@@ -236,15 +241,17 @@ void Client_Handle::operationLogin() {
 
 	ibsssAnnounceMessage(getSessionToken(), password_length, password);
 
-	if(usernameIsValid(username) && passwordIsValid(password))
+	if(usernameIsValid(username) && passwordIsValid(password)){
 		if(database_handle.authenticateUser(username, password)){
 			establishLoggedinStatus();
 			operation_successful++;	
 		}
+	}
 
 	//let the client now you were successful or that you failed base on the status
 	if (operation_successful){
 		ibsssWriteMessage(client_descriptor, &IBSSS_OP_SUCCESS, 1, write_status);
+		ibsssWriteMessage(client_descriptor, &(getSessionToken()[0]), IBSSS_SESSION_TOKEN_LENGTH, write_status);
 	} else {
 		ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
 	}

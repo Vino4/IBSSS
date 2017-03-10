@@ -158,7 +158,7 @@ int Database_Handle::authenticateUser(std::string username, std::string password
 	std::string authentication_statement = "SELECT EXISTS (SELECT 1 FROM USERS WHERE username = lower('"
 								+username
 								+"') AND password = lower('"
-								+password
+								+std::to_string(hash(password))
 								//+std::to_string(hash(password))
 								+"'))"; 
 
@@ -189,7 +189,6 @@ int Database_Handle::authenticateUser(std::string username, std::string password
 		std::cout << "DATABASE ERROR: FAILED AUTHENTICATE USER - " << exec_error << std::endl;
 		return 0;
 	}
-
 	return atoi(&authenticated);
 }
 
@@ -213,11 +212,11 @@ Returns:
 int Database_Handle::changePassword(std::string username, std::string old_password, std::string new_password){
 
 	std::string update_statement = "UPDATE users SET password = lower('" 
-								+new_password
+								+std::to_string(hash(new_password))
 								+"') WHERE username = lower('"
 								+username
 								+"') AND password = lower('"
-								+old_password
+								+std::to_string(hash(old_password))
 								+"')"; 
 
 	if (

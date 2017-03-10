@@ -29,7 +29,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <netdb.h>
 
 #define IBSSS_DEFAULT_HOSTNAME "localhost"
-#define IBSSS_DEFAULT_PORT 4777
+#define IBSSS_DEFAULT_PORT 4778
 
 #define ibsssReadMessage(descriptor, buffer, length, status)		\
 												\
@@ -138,9 +138,11 @@ class Server_Connection_Handle{
 		Arguments:
 			none
 		Returns:
-		      none
+		     int status
+				1: Success
+				0: Failure
 		*/
-		void connect();
+		int connect();
 
 
 		/*
@@ -480,7 +482,7 @@ class Server_Connection_Handle{
 		Returns:
 			none
 		*/
-		int operationForgotPassword();
+		int operationForgotPassword(std::string username, std::string email);
 
 		/*
 		Client_Handle::operationForgotUsername()
@@ -504,7 +506,7 @@ class Server_Connection_Handle{
 		Returns:
 			none
 		*/
-		int operationForgotUsername();
+		int operationForgotUsername(std::string email);
 
 	private:
 	

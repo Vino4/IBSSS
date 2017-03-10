@@ -127,9 +127,11 @@ Initialize the server connetion session by:
 Arguments:
 	none
 Returns:
-	none
+	int status
+		1: Success
+		0: Failure
 */
-void Server_Connection_Handle::connect(){
+int Server_Connection_Handle::connect(){
 	
       server_connection_descriptor= socket(AF_INET, SOCK_STREAM, 0);
       if (server_connection_descriptor < 0)
@@ -143,6 +145,8 @@ void Server_Connection_Handle::connect(){
       if (::connect(server_connection_descriptor,(struct sockaddr *) &server_address,sizeof(server_address)) < 0)
             ibsssError("failed to establish a connection to the server");
 
+	return operationHello();
+
 }
 
 /*
@@ -155,7 +159,9 @@ Arguments:
 Returns:
 	none
 */
-void Server_Connection_Handle::establishSecuredStatus(){}
+void Server_Connection_Handle::establishSecuredStatus(){
+	secured_status = 1;
+}
 
 /*
 establishLoggedinStatus()
@@ -167,7 +173,9 @@ Arguments:
 Returns:
 	none
 */
-void Server_Connection_Handle::establishLoggedinStatus(){}
+void Server_Connection_Handle::establishLoggedinStatus(){
+	logged_in_status = 1;
+}
 
 /*
 establishLoggedoutStatus()
@@ -179,7 +187,9 @@ Arguments:
 Returns:
 	none
 */
-void Server_Connection_Handle::establishLoggedoutStatus(){}
+void Server_Connection_Handle::establishLoggedoutStatus(){
+	logged_in_status = 0;
+}
 
 /*
 setAESKey(std::string key)
@@ -191,7 +201,9 @@ Arguments:
 Returns:
 	none
 */
-void Server_Connection_Handle::setAESKey(std::string key){}
+void Server_Connection_Handle::setAESKey(std::string key){
+	AES_key.assign(key);
+}
 
 /*
 Server_Handle::usernameIsValid()
@@ -207,7 +219,15 @@ Returns:
 		1: success
 		0: failure
 */
-int Server_Connection_Handle::usernameIsValid(std::string username){}
+int Server_Connection_Handle::usernameIsValid(std::string username){
+      int length = username.length();
+      if (length > IBSSS_GLOBAL_MAXIMUM_USERNAME_LENGTH || length < IBSSS_GLOBAL_MINIMUM_USERNAME_LENGTH)
+            return 0;
+      for(int i = 0; username[i];)
+            if (!std::isalnum(username[i++]))
+                  return 0;
+	return 1;
+}
 
 /*
 Server_Handle::passwordIsValid()
@@ -223,5 +243,13 @@ Returns:
 		1: success
 		0: failure
 */
-int Server_Connection_Handle::passwordIsValid(std::string password){}
+int Server_Connection_Handle::passwordIsValid(std::string password){
+      int length = password.length();
+      if (length > IBSSS_GLOBAL_MAXIMUM_PASSWORD_LENGTH || length < IBSSS_GLOBAL_MINIMUM_PASSWORD_LENGTH)
+            return 0;
+      for(int i = 0; password[i];)
+            if (!std::isalnum(password[i++]))
+                  return 0;
+      return 1;
+}
 

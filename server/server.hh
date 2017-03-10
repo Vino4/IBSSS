@@ -19,6 +19,6 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <stdio.h>
 #include <stdlib.h>
 
-#define IBSSS_DEFAULT_PORT 4777 
+#define IBSSS_DEFAULT_PORT 4778 
 
 #endif /*_MAIN_SERVER_HEADER*/
