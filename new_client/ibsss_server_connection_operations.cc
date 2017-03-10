@@ -7,9 +7,8 @@ Authors:
 Matt Almenshad | Andrew Gao | Jenny Horn 
 */
 
-#include "ibsss_database_handler.hh"
 #include "ibsss_restrictions.h"
-#include "ibsss_client_handler.hh"
+#include "ibsss_server_connection_handler.hh"
 #include "ibsss_op_codes.hh"
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,13 +19,11 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <netinet/in.h>
 #include <iostream>
 #include <vector>
-#include <thread>
-#include <sqlite3.h>
-#include <ibsss_database.h>
 #include <ibsss_session_token.h>
 #include <ibsss_mutex.hh>
 #include <algorithm>
 #include <ibsss_error.hh>
+#include <netdb.h>
 
 int Server_Connection_Handle::operationHello(){
 	
@@ -37,11 +34,13 @@ int Server_Connection_Handle::operationHello(){
 
 	//TODO: generate AES key and send it
 	// make a fake AES key for now
-	AES_key = "123";
-	length = strlen(AES_key);
+	AES_key[0] = '1';
+	AES_key[1] = '2';
+	AES_key[2] = '3';
+	AES_key[3] = '\0';
 
 	// Remeber the AES key
-	setAESKey(std::string(AES_key, AES_key+length));
+	setAESKey(std::string(AES_key, AES_key+4));
 	
 	// Send Op Code to server
 	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_HELLO, 1, write_status);
@@ -96,7 +95,7 @@ int Server_Connection_Handle::operationCreateUser(std::string username, std::str
 
 
 	// read what server returns
-	ibsssReadMessage(server_connection_descriptor, &opertiaon_status, 1, read_status);
+	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
 
 	switch (operation_status) {
 		case IBSSS_OP_SUCCESS:
@@ -112,7 +111,7 @@ int Server_Connection_Handle::operationCreateUser(std::string username, std::str
 
 
 
-void Server_Connection_Handle::operationLogin(std::string username, std::string password) {
+int Server_Connection_Handle::operationLogin(std::string username, std::string password) {
 
 	if(!secured_status)
 		return 0;
@@ -130,18 +129,18 @@ void Server_Connection_Handle::operationLogin(std::string username, std::string 
 	ibsssWriteMessage(server_connection_descriptor, &username_length, sizeof(username_length), write_status);
 
 	//send username
-	ibsssWriteMessage(server_connection_descriptor, username, username_length, write_status);
+	ibsssWriteMessage(server_connection_descriptor, &username[0], username_length, write_status);
 
 	//send password length
 	ibsssWriteMessage(server_connection_descriptor, &password_length, sizeof(password_length), write_status);
 	
 	// send password
-	ibsssWriteMessage(server_connection_descriptor, password, password_length, write_status);		
+	ibsssWriteMessage(server_connection_descriptor, &password[0], password_length, write_status);		
 
 	// read what server returns
 	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
 
-	switch (operation_success) {
+	switch (operation_status) {
 		case IBSSS_OP_SUCCESS:
 			session_token.resize(IBSSS_SESSION_TOKEN_LENGTH);
 			ibsssReadMessage(server_connection_descriptor, &session_token[0], IBSSS_SESSION_TOKEN_LENGTH, 
@@ -192,7 +191,7 @@ int Server_Connection_Handle::operationLogout() {
 	// read what server returns
 	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
 
-	switch (operation_success) {
+	switch (operation_status) {
 		case IBSSS_OP_SUCCESS:
 			establishLoggedoutStatus();
 			return 1;
@@ -253,7 +252,7 @@ Arguments:
 Returns:
 	none
 */
-void Server_Connection_Handle::operationRequestStreamKey(){
+int Server_Connection_Handle::operationRequestStreamKey(){
 
 	//TODO implement 
 	return 0;
@@ -285,7 +284,7 @@ Arguments:
 Returns:
 	none
 */
-void Server_Connection_Handle::operationChangePassword(std::string username, std::string old_password, std::string new_password){
+int Server_Connection_Handle::operationChangePassword(std::string username, std::string old_password, std::string new_password){
 	if (!secured_status)
 		return 0;
 
@@ -318,7 +317,7 @@ void Server_Connection_Handle::operationChangePassword(std::string username, std
 	// read what server returns
 	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
 
-	switch (operation_success) {
+	switch (operation_status) {
 		case IBSSS_OP_SUCCESS:
 			return 1;
 		case IBSSS_OP_FAILURE:
@@ -350,7 +349,7 @@ Arguments:
 Returns:
 	none
 */
-void Server_Connection_Handle::operationForgotPassword(){
+int Server_Connection_Handle::operationForgotPassword(){
 	//TODO:Implement	
 }
 
@@ -376,10 +375,10 @@ Arguments:
 Returns:
 	none
 */
-void Server_Connection_Handle::operationForgotUsername(){
+int Server_Connection_Handle::operationForgotUsername(){
 
 	int write_status;
 	//TODO: send username to user's email
-	ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
+	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
 
 }

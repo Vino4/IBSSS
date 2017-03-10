@@ -26,6 +26,10 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <ibsss_mutex.hh>
 #include <algorithm>
 #include <ibsss_error.hh>
+#include <netdb.h>
+
+#define IBSSS_DEFAULT_HOSTNAME "localhost"
+#define IBSSS_DEFAULT_PORT 4777
 
 #define ibsssReadMessage(descriptor, buffer, length, status)		\
 												\
@@ -36,7 +40,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 		std::cout << "Read Status: " << status << std::endl;		\
 												\
 	if (status == 0)									\
-		return;
+		return 0;
 
 #define ibsssWriteMessage(descriptor, buffer, length, status)		\
 												\
@@ -47,7 +51,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 		std::cout << "Write Status: " << status << std::endl;		\
 												\
 	if (status == 0)									\
-		return;
+		return 0;
 
 #define ibsssAnnounceMessage(token, length, message)				\
 	std::cout << "[" << token << "]["						\
@@ -67,6 +71,7 @@ class Server_Connection_Handle{
 		Server_Connection_Handle()
 		
 		Initializes a server connetion handle by:
+			- Setting default hostname and port 
 			- Setting all strings to '\0'
 			- Setting all status, descriptor and other integeral variables to -1 or 0 where needed
 		
@@ -77,6 +82,67 @@ class Server_Connection_Handle{
 		*/
 		Server_Connection_Handle();
 		
+		/*
+		Client_Handle::setHostname(std::string hostname)
+	
+		Sets the server hostname;
+		Will be used later to establish a connection to the server.
+		
+		Arguments:
+			string hostname	
+		Returns:
+		      none
+		*/
+		void setHostname(std::string hostname);
+
+		/*
+		Client_Handle::setPort(int port)
+	
+		Sets the server port;
+		Will be used later to establish a connection to the server.
+		*if not called, IBSSS_DEFAULT_HOSTNAME will be used		
+		
+		Arguments:
+			int port
+		Returns:
+		      none
+		*/
+		void setPort(int port);
+		
+		/*
+		Client_Handle::setDescriptor(int descriptor)
+	
+		Sets the client socket descriptor;
+		Will be used later to write to, read from and manage the main client socket.
+		*if not called, IBSSS_DEFAULT_PORT will be used		
+		
+		Arguments:
+			int descriptor, main socket descriptor 
+		Returns:
+		      none
+		*/
+
+		/*
+		Client_Handle::connect()
+
+		Connects to server. Init must be called before any calls to this function
+		Calls to setPort and setHostname are optional.
+		If no Port or Hostname are set, IBSSS_DEFAULT_HOSTNAME and IBSSS_DEFAULT_PORT will be used.
+		(Server_Connection_Handle) conenction will maintane the connection descriptor 
+
+		Initialize the server connetion session by:
+			- Setting the appropriate session variables
+			- Sends operation hello to the server
+			- Establishing the secure link
+
+		Arguments:
+			none
+		Returns:
+		      none
+		*/
+		void connect();
+
+
 		/*
 		killSession()
 			- Closes TCP connection
@@ -98,7 +164,7 @@ class Server_Connection_Handle{
 		Returns:
 			none
 		*/
-		std::string setSessionToken();	
+		void setSessionToken(std::string new_session_token);	
 
 		/*
 		getSessionToken()
@@ -135,20 +201,6 @@ class Server_Connection_Handle{
 		*/
 		int getConnectionDescriptor();
 		
-		/*
-		connect()
-		
-		Initialize the server connetion session by:
-			- Setting the appropriate session variables
-			- Sends operation hello to the server
-			- Establishing the secure link
-		Arguments:
-			none
-		Returns:
-			none
-		*/
-		void connect();
-	
 		/*
 		Client_Handle::establishSecuredStatus()
 
@@ -251,7 +303,7 @@ class Server_Connection_Handle{
 		Returns:
 			none
 		*/
-		void operationHello();
+		int operationHello();
 
 		/*
 		Client_Handle::operationCreateUser()
@@ -273,11 +325,11 @@ class Server_Connection_Handle{
 			- (unsigned char) IBSSS_OP_SUCCESS
 
 		Arguments:
-			none
+			std::string username, std::string password, std::string email
 		Returns:
 			none
 		*/
-		void operationCreateUser();
+		int operationCreateUser(std::string username, std::string password, std::string email);
 
 		/*
 		Client_Handle::operationLogin()
@@ -298,11 +350,11 @@ class Server_Connection_Handle{
 			OR
 			- (unsigned char) IBSSS_OP_FAILURE
 		Arguments:
-			none
+			std::string username, std::string password
 		Returns:
 			none
 		*/
-		void operationLogin();
+		int operationLogin(std::string username, std::string password);
 
 		/*
 		Client_Handle::operationLogout()
@@ -325,7 +377,7 @@ class Server_Connection_Handle{
 		Returns:
 			none
 		*/
-		void operationLogout();
+		int operationLogout();
 
 		/*
 		Client_Handle::operationRequestStreamLinks()
@@ -350,7 +402,7 @@ class Server_Connection_Handle{
 		Returns:
 			none
 		*/
-		void operationRequestStreamLinks();
+		int operationRequestStreamLinks();
 
 		/*
 		Client_Handle::operationRequestStreamKey()
@@ -374,7 +426,7 @@ class Server_Connection_Handle{
 		Returns:
 			none
 		*/
-		void operationRequestStreamKey();
+		int operationRequestStreamKey();
 
 		/*
 		Client_Handle::operationChangePassword()
@@ -402,7 +454,7 @@ class Server_Connection_Handle{
 		Returns:
 			none
 		*/
-		void operationChangePassword();
+		int operationChangePassword(std::string username, std::string old_password, std::string new_password);
 
 		/*
 		Client_Handle::operationForgotPassword()
@@ -428,7 +480,7 @@ class Server_Connection_Handle{
 		Returns:
 			none
 		*/
-		void operationForgotPassword();
+		int operationForgotPassword();
 
 		/*
 		Client_Handle::operationForgotUsername()
@@ -452,10 +504,15 @@ class Server_Connection_Handle{
 		Returns:
 			none
 		*/
-		void operationForgotUsername();
+		int operationForgotUsername();
+
 	private:
-		
-		int server_connetion_descriptor;
+	
+		struct hostent * server_hostname;	
+		int server_port;
+		struct sockaddr_in server_address;
+		int connected_status;
+		int server_connection_descriptor;
 		std::string AES_key;
 		std::string username;
 		std::string session_token;
