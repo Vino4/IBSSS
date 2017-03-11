@@ -69,7 +69,7 @@ void Database_Handle::configure(){
 	if(sqlite3_threadsafe() != 1)
 		ibsssError("SQLite library must be compiled with multithreading support enabled");
 	
-	const char * table_statement= "CREATE TABLE IF NOT EXISTS USERS("  
+	std::string table_statement= "CREATE TABLE IF NOT EXISTS USERS("  
 						"ID 			INTEGER PRIMARY KEY		  ," 
 						"USERNAME		TEXT				NOT NULL," 
 						"PASSWORD		TEXT				NOT NULL," 
@@ -77,13 +77,15 @@ void Database_Handle::configure(){
 						"IS_ADMIN		INTEGER			DEFAULT 0,"
 						"UNIQUE(USERNAME, EMAIL));";
 //	std::cout << "STATEMENT: " << table_statement << std::endl;
-	if (sqlite3_exec(database, table_statement, NULL, NULL, &exec_error) != SQLITE_OK)
+	if (sqlite3_exec(database, table_statement.c_str(), NULL, NULL, &exec_error) != SQLITE_OK)
 		std::cout << "EXEC_ERROR: " << exec_error << std::endl;
-	const char * root_statement = "INSERT OR IGNORE INTO USERS"
+	std::string root_statement = "INSERT OR IGNORE INTO USERS"
 						"(USERNAME, PASSWORD, EMAIL, IS_ADMIN) "
 						"VALUES"
-						"('root', 'admin', 'admin@localhost', 1)"; 
-	if (sqlite3_exec(database, root_statement, NULL, NULL, &exec_error) != SQLITE_OK)
+						"('root', '"
+						+std::to_string(hash("admin"))
+						+"', 'admin@localhost', 1)"; 
+	if (sqlite3_exec(database, root_statement.c_str(), NULL, NULL, &exec_error) != SQLITE_OK)
 		std::cout << "EXEC_ERROR: " << exec_error << std::endl;
 }
 

@@ -112,12 +112,15 @@ Returns:
 */
 void Server_Handle::init(int port){
 	
+	std::cout << "{[=-....Initializing Server....-=]}" << std::endl;
+	
 	main_port = port;
 
 	srand(time(0));
 
+	std::cout << "[Server Initializer]: Opening main port..";
 	if ((main_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0)
-		ibsssError("could not open main socket");
+		ibsssError("\ncould not open main socket");
 
 	bzero((char *) &server_address, sizeof(struct sockaddr_in));
 	
@@ -126,25 +129,37 @@ void Server_Handle::init(int port){
 	server_address.sin_port = htons(main_port);
 
 	if (bind(main_socket, (struct sockaddr *) &server_address, sizeof(struct sockaddr_in)) < 0) 
-		ibsssError("binding main address failed");
+		ibsssError("\nbinding main address failed");
+	std::cout << "Done" << std::endl;
 
+	std::cout << "[Server Initializer]: Initializing Listener..";
 	if (listen(main_socket, IBSSS_MAXIMUM_BENDING_CONNECTIONS) < 0)
-		ibsssError("listening to main socket failed");
+		ibsssError("\nlistening to main socket failed");
+	std::cout << "Done" << std::endl;
 	
+	std::cout << "[Server Initializer]: Setting signal handlers..";
 	if (signal(SIGINT, ibsssSignalHandler) == SIG_ERR)
-		ibsssError("Failed to set SIGINT handler");
+		ibsssError("\nFailed to set SIGINT handler");
 
 	if (signal(SIGPIPE, SIG_IGN) == SIG_ERR)
-		ibsssError("Failed to set SIGPIPE handler");
+		ibsssError("\nFailed to set SIGPIPE handler");
+	std::cout << "Done" << std::endl;
 	
+	std::cout << "[Server Initializer]: Configuring Database..";
 	database_handle.configure();
+	std::cout << "Done" << std::endl;
 	if(database_handle.authenticateUser("root", "admin"))
-		std::cout << "user authenticated" << std::endl;
-	if(database_handle.changePassword("root", "diedie", "admin"))
-		std::cout << "password changed" << std::endl;
+		std::cout 
+		<< "[Server Initializer]: WARNING: root is using the default settings, please change" 
+		<< std::endl;
+	else
+		std::cout << "[Server Initializer]: root is secured" << std::endl;
 
+	std::cout << "[Server Initializer]: Starting Connection Manager..";
 	thread_handle = new std::thread(&Server_Handle::runConnectionManager, this, this);	
+	std::cout << "Done" << std::endl;
 
+	std::cout << "[Server Initializer]: Fully Initialized Server" << std::endl;
 	while (IBSSS_SERVER_IS_ALIVE != 0){
 		sleep(1);
 	}
