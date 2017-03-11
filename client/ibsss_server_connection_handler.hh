@@ -28,7 +28,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <ibsss_error.hh>
 #include <netdb.h>
 
-#define IBSSS_DEFAULT_HOSTNAME "localhost"
+#define IBSSS_DEFAULT_HOSTNAME "10.111.116.199"
 #define IBSSS_DEFAULT_PORT 4774
 
 #define ibsssReadMessage(descriptor, buffer, length, status)		\
@@ -215,6 +215,21 @@ class Server_Connection_Handle{
 		*/
 		void establishSecuredStatus();
 	
+
+        /*
+        isConnected();
+        Gets connection status
+
+        Arguments:
+            none
+        Returns:
+            int connection status
+                1: securely connected
+                0: not connected
+        */
+        int isConnected();
+
+
 		/*
 		establishLoggedinStatus()
 	
@@ -224,8 +239,8 @@ class Server_Connection_Handle{
 			none
 		Returns:
 			none
-		*/
-		void establishLoggedinStatus();	
+		*/      
+        void establishLoggedinStatus();
 	
 		/*
 		establishLoggedoutStatus()

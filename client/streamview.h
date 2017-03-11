@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QGraphicsScene>
+#include "ibsss_server_connection_handler.hh"
 
 class QActionGroup;
 class QButtonGroup;
@@ -17,7 +18,7 @@ class StreamView : public QMainWindow
     Q_OBJECT
 
 public:
-    explicit StreamView(QWidget *parent = 0);
+    explicit StreamView(QWidget *parent = 0, Server_Connection_Handle * connection_ptr = NULL);
     ~StreamView();
     void LoadImage(QPixmap file);
 
@@ -37,6 +38,8 @@ private:
     QButtonGroup* backs;
     QStringList listy;
     QGraphicsScene *scene;
+    Server_Connection_Handle * connection;
+
 };
 
 #endif // STREAMVIEW_H

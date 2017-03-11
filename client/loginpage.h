@@ -16,16 +16,17 @@ class LoginPage : public QDialog
 public:
     explicit LoginPage(QWidget *parent = 0);
     ~LoginPage();
+    Server_Connection_Handle *getConnection();
 
 private slots:
     void on_loginButton_clicked();
 
-    void on_newUserButton_clicked();
+    void on_CreateUserButton_clicked();
 
 private:
     Ui::LoginPage *ui;
     StreamView *streamView;
-    Server_Connection_Handle connection;
+    Server_Connection_Handle * connection;
 };
 
 #endif // LOGINPAGE_H

@@ -323,7 +323,7 @@
   </action>
   <action name="actionLog_out">
    <property name="text">
-    <string>Log out</string>
+    <string>Log out and quit</string>
    </property>
   </action>
   <action name="actionAdd_Stream">

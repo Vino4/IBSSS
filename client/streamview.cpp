@@ -7,16 +7,18 @@
 #include <ctime>
 #include <thread>
 #include <QTimer>
+#include "ibsss_server_connection_handler.hh"
 
 bool thing = true;
 
-StreamView::StreamView(QWidget *parent) :
+StreamView::StreamView(QWidget *parent, Server_Connection_Handle * connection_ptr) :
     QMainWindow(parent),
     ui(new Ui::StreamView),
     sections(new QActionGroup(this)),
     backs(new QButtonGroup(this))
 {
     ui->setupUi(this);
+    connection = connection_ptr;
 
 /*    QWidget *centralWidget = new QWidget(this);
     QMenuBar *menu = new QMenuBar(centralWidget);
@@ -113,9 +115,11 @@ void StreamView::LoadImage(QPixmap file){
 
 void StreamView::on_actionLog_out_triggered()
 {
-    //parent->show();
+    //qobject_cast<QMainWindow>(this->parent())
+    //this->parent()->d //getConnection()->killSession(); // :)
+    //connection->killSession();
+    connection->killSession();
     this->close();
-    //logout
 }
 
 void StreamView::showSection(QAction *a){

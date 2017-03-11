@@ -61,7 +61,13 @@ Returns:
 */
 void Server_Connection_Handle::killSession(){
 	close(server_connection_descriptor);	
-	delete this;
+    server_connection_descriptor = -1;
+        AES_key.assign("\0");
+    username.assign("\0");
+        session_token.assign("\0");
+        secured_status = 0;
+        logged_in_status = 0;
+
 }
 
 /*
@@ -162,6 +168,22 @@ Returns:
 void Server_Connection_Handle::establishSecuredStatus(){
 	secured_status = 1;
 }
+
+/*
+isConnected();
+Gets connection status
+
+Arguments:
+    none
+Returns:
+    int connection status
+        1: securely connected
+        0: not connected
+*/
+int Server_Connection_Handle::isConnected(){
+    return secured_status;
+}
+
 
 /*
 establishLoggedinStatus()
