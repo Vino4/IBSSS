@@ -5,7 +5,7 @@ DEBUG = -g
 CFLAGS = -std=c++11 -Wall -c $(DEBUG)
 LFLAGS = -std=c++11 -Wall $(DEBUG)
 server_dir = server/
-client_dir = new_client/
+client_dir = client/
 spec_dir = specifications/
 SERVER_LIBRARIES = -lpthread -lsqlite3
 CLIENT_LIBRARIES = 
