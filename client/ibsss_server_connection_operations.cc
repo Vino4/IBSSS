@@ -122,7 +122,6 @@ int Server_Connection_Handle::operationLogin(std::string username, std::string p
 	if(!secured_status)
 		return 0;
 
-	
 	int read_status, write_status;
 	char operation_status;
 
@@ -135,12 +134,12 @@ int Server_Connection_Handle::operationLogin(std::string username, std::string p
 	//send username length
 	ibsssWriteMessage(server_connection_descriptor, &username_length, sizeof(username_length), write_status);
 
-	//send username
+    //send username
 	ibsssWriteMessage(server_connection_descriptor, &username[0], username_length, write_status);
 
 	//send password length
 	ibsssWriteMessage(server_connection_descriptor, &password_length, sizeof(password_length), write_status);
-	
+
 	// send password
 	ibsssWriteMessage(server_connection_descriptor, &password[0], password_length, write_status);		
 

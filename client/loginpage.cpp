@@ -1,7 +1,6 @@
 #include "loginpage.h"
 #include "ui_loginpage.h"
-//#include "ibsss_server_connection_handler.hh"
-
+#include "ibsss_server_connection_handler.hh"
 #include <QMessageBox>
 #include <unistd.h>
 
@@ -24,9 +23,10 @@ void LoginPage::on_loginButton_clicked()
 
     //mattsLoginFunction(username.toStdString(), password.toStdString());
 
+    int success = connection.connect();
+    //QMessageBox::information(this, "resulty", QString::number(success));
 
-
-    if(username=="" && password == ""){
+    if (connection.operationLogin(username.toStdString(), password.toStdString())){
         //QMessageBox::information(this, "Login", "YAY");
 
         QPixmap file("cereal.jpeg"); //
@@ -46,4 +46,9 @@ void LoginPage::on_loginButton_clicked()
         QMessageBox::information(this, "Login", "WRONG TRY AGAIN");
     }
 
+}
+
+void LoginPage::on_newUserButton_clicked()
+{
+    //connection.operationCreateUser()
 }

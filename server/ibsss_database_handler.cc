@@ -155,7 +155,6 @@ Returns:
 		0: failure username/password wrong	
 */
 int Database_Handle::authenticateUser(std::string username, std::string password){
-	
 	char authenticated;
 	std::string authentication_statement = "SELECT EXISTS (SELECT 1 FROM USERS WHERE username = lower('"
 								+username

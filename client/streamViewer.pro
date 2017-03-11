@@ -11,13 +11,21 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 TARGET = streamViewer
 TEMPLATE = app
 
+INCLUDEPATH += $$PWD/../specifications
 
 SOURCES += main.cpp\
         loginpage.cpp \
-    streamview.cpp
+    streamview.cpp \
+    *.cc \
+    ../specifications/*.cc \
+    ../specifications/*.c
 
-HEADERS  += loginpage.h \
-    streamview.h
+HEADERS  += *.h \
+    *.hh \
+    #../specifications/*.hh \
+    #../specifications/*.h
 
 FORMS    += loginpage.ui \
     streamview.ui
+
+

@@ -113,11 +113,14 @@ Returns:
 void Client_Handle::operationCreateUser() {
 	int read_status, write_status;
 
+	std::cout << "2" << std::endl;
+
 	if (!secured_status){
 		ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
 		return;
 	}
 	
+	std::cout << "3" << std::endl;
 	std::string username;
 	std::string password;
 	std::string email;
@@ -166,10 +169,12 @@ void Client_Handle::operationCreateUser() {
 
 	if(usernameIsValid(username) && passwordIsValid(password))
 		if(database_handle.createUser(username, password, email)){
+	std::cout << "4" << std::endl;
 			establishLoggedinStatus();			
 			operation_successful++;	
 		}
 
+	std::cout << "5" << std::endl;
 	//let the client now you were successful or that you failed base on the status
 	if (operation_successful){
 		ibsssWriteMessage(client_descriptor, &IBSSS_OP_SUCCESS, 1, write_status);

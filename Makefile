@@ -11,7 +11,7 @@ SERVER_LIBRARIES = -lpthread -lsqlite3
 CLIENT_LIBRARIES = 
 server_inc = -Ispecifications
 client_inc = -Ispecifications
-EXECUTABLES = Server Client
+EXECUTABLES = Server
 
 IBSSS : $(EXECUTABLES)
 

@@ -29,7 +29,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <netdb.h>
 
 #define IBSSS_DEFAULT_HOSTNAME "localhost"
-#define IBSSS_DEFAULT_PORT 4778
+#define IBSSS_DEFAULT_PORT 4774
 
 #define ibsssReadMessage(descriptor, buffer, length, status)		\
 												\
