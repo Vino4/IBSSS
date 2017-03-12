@@ -28,7 +28,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <ibsss_error.hh>
 #include <netdb.h>
 
-#define IBSSS_DEFAULT_HOSTNAME "10.111.116.199"
+#define IBSSS_DEFAULT_HOSTNAME "128.223.6.25"
 #define IBSSS_DEFAULT_PORT 4774
 
 #define ibsssReadMessage(descriptor, buffer, length, status)		\

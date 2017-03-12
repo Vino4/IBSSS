@@ -1,5 +1,5 @@
-#include "streamview.h"
-#include "ui_streamview.h"
+#include "ibsss_stream_view_window.h"
+#include "ui_ibsss_stream_view_window.h"
 #include <QMessageBox>
 #include <QPixmap>
 //#include <QGraphicsScene>
@@ -8,17 +8,23 @@
 #include <thread>
 #include <QTimer>
 #include "ibsss_server_connection_handler.hh"
+#include <QStateMachine>
+#include <QState>
+#include <QFinalState>
+#include <QObject>
+#include "ibsss_state_machine_event.h"
 
 bool thing = true;
 
-StreamView::StreamView(QWidget *parent, Server_Connection_Handle * connection_ptr) :
-    QMainWindow(parent),
-    ui(new Ui::StreamView),
+IBSSS_Stream_View_Window::IBSSS_Stream_View_Window(__attribute__((unused)) QApplication *parent, Server_Connection_Handle * connection_ptr, QStateMachine * state_machine_ptr) :
+    QMainWindow(NULL),
+    ui(new Ui::IBSSS_Stream_View_Window_Layout),
     sections(new QActionGroup(this)),
     backs(new QButtonGroup(this))
 {
     ui->setupUi(this);
     connection = connection_ptr;
+    state_machine = state_machine_ptr;
 
 /*    QWidget *centralWidget = new QWidget(this);
     QMenuBar *menu = new QMenuBar(centralWidget);
@@ -50,6 +56,7 @@ StreamView::StreamView(QWidget *parent, Server_Connection_Handle * connection_pt
 
     connect(backs, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(backToStreamview()));
 
+
     //I guess do it here? for whichever streams the viewer has, add them to graphics views on [page0] and to the listView [page2]
     //    ui->streamsList->addItem(stream);
 
@@ -77,12 +84,12 @@ StreamView::StreamView(QWidget *parent, Server_Connection_Handle * connection_pt
     //ui->tableWidget->setAlternatingRowColors();
 }
 
-StreamView::~StreamView()
+IBSSS_Stream_View_Window::~IBSSS_Stream_View_Window()
 {
     delete ui;
 }
 
-void StreamView::LoadImage(QPixmap file){
+void IBSSS_Stream_View_Window::LoadImage(QPixmap file){
 
 //    QPixmap file("cereal.jpeg"); //
 //    QPixmap file2("bowlofcereal.jpeg");
@@ -113,18 +120,14 @@ void StreamView::LoadImage(QPixmap file){
 
 
 
-void StreamView::on_actionLog_out_triggered()
+void IBSSS_Stream_View_Window::on_actionLog_out_triggered()
 {
-    //qobject_cast<QMainWindow>(this->parent())
-    //this->parent()->d //getConnection()->killSession(); // :)
-    //connection->killSession();
-    connection->killSession();
-    this->close();
+    state_machine->postEvent(new State_Machine_Event("Loggin_In"));
+    this->hide(); //hide streamview window
 }
 
-void StreamView::showSection(QAction *a){
+void IBSSS_Stream_View_Window::showSection(QAction *a){
     ui->stackedWidget->setCurrentIndex(a->data().toInt());
-
 }
 /*
 void StreamView::on_actionManage_Streams_triggered()
@@ -133,7 +136,7 @@ void StreamView::on_actionManage_Streams_triggered()
 
 }
 */
-void StreamView::backToStreamview()
+void IBSSS_Stream_View_Window::backToStreamview()
 {
     ui->stackedWidget->setCurrentIndex(0); //back to stream view
 }
@@ -144,12 +147,8 @@ void StreamView::on_back_clicked()
 }
 */
 
-void StreamViewThreadHandler(void *something){
-    QMessageBox::information((QWidget *) something, "titlee", "thisisthe StreamViewThreadHandler function");
-    //something->exit();
-}
 
-void StreamView::on_changeImageButton_clicked()
+void IBSSS_Stream_View_Window::on_changeImageButton_clicked()
 {
     //make new thread
     //pass address of this class to the thread

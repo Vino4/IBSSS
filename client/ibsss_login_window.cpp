@@ -1,24 +1,30 @@
-#include "loginpage.h"
-#include "ui_loginpage.h"
+#include "ibsss_login_window.h"
+#include "ui_ibsss_login_window.h"
 #include "ibsss_server_connection_handler.hh"
 #include <QMessageBox>
 #include <unistd.h>
+#include <QStateMachine>
+#include <QState>
+#include <QFinalState>
+#include <QObject>
+#include "ibsss_state_machine_event.h"
 
-LoginPage::LoginPage(QWidget *parent) :
-    QDialog(parent),
-    ui(new Ui::LoginPage)
+IBSSS_Login_Window::IBSSS_Login_Window(__attribute__((unused)) QApplication *parent, Server_Connection_Handle * connection_ptr, QStateMachine * state_machine_ptr) :
+    QDialog(NULL),
+    ui(new Ui::IBSSS_Login_Window_Layout)
 {
     ui->setupUi(this);
-    connection = new Server_Connection_Handle;
+    connection = connection_ptr;
+    state_machine = state_machine_ptr;
 
 }
 
-LoginPage::~LoginPage()
+IBSSS_Login_Window::~IBSSS_Login_Window()
 {
     delete ui;
 }
 
-void LoginPage::on_loginButton_clicked()
+void IBSSS_Login_Window::on_loginButton_clicked()
 {
     QString username = ui->username->text();
     QString password = ui->password->text();
@@ -37,13 +43,14 @@ void LoginPage::on_loginButton_clicked()
 
         QPixmap file("cereal.jpeg"); //
         QPixmap file2("bowlofcereal.jpeg");
-
+        /*
         streamView = new StreamView(this);
 
         streamView->show();
-
+        */
+        state_machine->postEvent(new State_Machine_Event("Logged_In"));
         this->hide(); //hide login dialog box
-        streamView->LoadImage(file2);
+        //streamView->LoadImage(file2);
         //streamView->LoadImage(file);
         //sleep(1);
         //streamView->LoadImage(file2);
@@ -54,11 +61,7 @@ void LoginPage::on_loginButton_clicked()
 
 }
 
-Server_Connection_Handle * LoginPage::getConnection(){
-    return connection;
-}
-
-void LoginPage::on_CreateUserButton_clicked()
+void IBSSS_Login_Window::on_CreateUserButton_clicked()
 {
     if (!connection->isConnected()){
         if (!connection->connect()){
@@ -97,13 +100,13 @@ void LoginPage::on_CreateUserButton_clicked()
 
     QPixmap file("cereal.jpeg"); //
     QPixmap file2("bowlofcereal.jpeg");
-
+    /*
     streamView = new StreamView(this, connection);
 
     streamView->show();
-
+    */
     this->hide(); //hide login dialog box
-    streamView->LoadImage(file2);
+    //streamView->LoadImage(file2);
     //streamView->LoadImage(file);
     //sleep(1);
     //streamView->LoadImage(file2);

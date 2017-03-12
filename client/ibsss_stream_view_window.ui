@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>StreamView</class>
- <widget class="QMainWindow" name="StreamView">
+ <class>IBSSS_Stream_View_Window_Layout</class>
+ <widget class="QMainWindow" name="IBSSS_Stream_View_Window_Layout">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -299,7 +299,7 @@
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>27</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="settingsMenu">
@@ -312,6 +312,7 @@
     <addaction name="actionChange_Password"/>
     <addaction name="separator"/>
     <addaction name="actionLog_out"/>
+    <addaction name="actionQuit"/>
    </widget>
    <addaction name="settingsMenu"/>
   </widget>
@@ -323,7 +324,7 @@
   </action>
   <action name="actionLog_out">
    <property name="text">
-    <string>Log out and quit</string>
+    <string>Log out</string>
    </property>
   </action>
   <action name="actionAdd_Stream">
@@ -339,6 +340,11 @@
   <action name="actionChange_Password">
    <property name="text">
     <string>Change Password</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
    </property>
   </action>
  </widget>

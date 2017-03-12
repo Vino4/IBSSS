@@ -8,14 +8,12 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = streamViewer
+TARGET = ../Client
 TEMPLATE = app
 
 INCLUDEPATH += $$PWD/../specifications
 
-SOURCES += main.cpp\
-        loginpage.cpp \
-    streamview.cpp \
+SOURCES += *.cpp \
     *.cc \
     ../specifications/*.cc \
     ../specifications/*.c
@@ -25,7 +23,7 @@ HEADERS  += *.h \
     #../specifications/*.hh \
     #../specifications/*.h
 
-FORMS    += loginpage.ui \
-    streamview.ui
+FORMS    += ibsss_login_window.ui \
+    ibsss_stream_view_window.ui
 
 

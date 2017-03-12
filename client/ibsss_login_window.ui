@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>LoginPage</class>
- <widget class="QDialog" name="LoginPage">
+ <class>IBSSS_Login_Window_Layout</class>
+ <widget class="QDialog" name="IBSSS_Login_Window_Layout">
   <property name="geometry">
    <rect>
     <x>0</x>
