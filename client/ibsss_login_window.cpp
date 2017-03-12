@@ -48,7 +48,7 @@ void IBSSS_Login_Window::on_loginButton_clicked()
 
         streamView->show();
         */
-        state_machine->postEvent(new State_Machine_Event("Logged_In"));
+        state_machine->postEvent(new State_Machine_Event("Login"));
         this->hide(); //hide login dialog box
         //streamView->LoadImage(file2);
         //streamView->LoadImage(file);

@@ -122,7 +122,7 @@ void IBSSS_Stream_View_Window::LoadImage(QPixmap file){
 
 void IBSSS_Stream_View_Window::on_actionLog_out_triggered()
 {
-    state_machine->postEvent(new State_Machine_Event("Loggin_In"));
+    state_machine->postEvent(new State_Machine_Event("Logout"));
     this->hide(); //hide streamview window
 }
 

@@ -40,10 +40,13 @@ private slots:
 
 private:
     Ui::IBSSS_Stream_View_Window_Layout *ui;
+
     QActionGroup* sections;
     QButtonGroup* backs;
     QStringList listy;
+
     QGraphicsScene *scene;
+
     Server_Connection_Handle * connection;
     QStateMachine * state_machine;
 
