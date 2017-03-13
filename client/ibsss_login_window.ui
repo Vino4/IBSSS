@@ -223,6 +223,17 @@
   </widget>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <tabstops>
+  <tabstop>username</tabstop>
+  <tabstop>password</tabstop>
+  <tabstop>loginButton</tabstop>
+  <tabstop>cu_username</tabstop>
+  <tabstop>cu_password</tabstop>
+  <tabstop>cu_confirm_pw</tabstop>
+  <tabstop>cu_email</tabstop>
+  <tabstop>cu_confirm_em</tabstop>
+  <tabstop>CreateUserButton</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

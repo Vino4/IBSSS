@@ -46,6 +46,7 @@ Server_Connection_Handle::Server_Connection_Handle(){
             session_token = "\0";
             secured_status = 0;
             logged_in_status = 0;
+            connected_status = 0;
 }
 
 /*
@@ -67,6 +68,7 @@ void Server_Connection_Handle::killSession(){
         session_token.assign("\0");
         secured_status = 0;
         logged_in_status = 0;
+        connected_status = 0;
 
 }
 
@@ -92,6 +94,18 @@ Returns:
 */
 std::string Server_Connection_Handle::getSessionToken(){
 	return session_token;
+}
+
+/*
+getUsername()
+
+Arguments:
+    none
+Returns:
+    std::string username
+*/
+std::string Server_Connection_Handle::getUsername(){
+    return username;
 }
 
 /*
@@ -170,6 +184,33 @@ void Server_Connection_Handle::establishSecuredStatus(){
 }
 
 /*
+Client_Handle::establishDisonnectedStatus()
+
+Disables the connected flag
+
+Arguments:
+    none
+Returns:
+    none
+*/
+void Server_Connection_Handle::establishDisonnectedStatus(){
+    secured_status = 0;
+}
+
+/*
+Client_Handle::establishConnectedStatus()
+
+Enables the connected flag
+
+Arguments:
+    none
+Returns:
+    none
+*/
+void Server_Connection_Handle::establishConnectedStatus(){
+    secured_status = 1;
+}
+/*
 isConnected();
 Gets connection status
 
@@ -181,7 +222,7 @@ Returns:
         0: not connected
 */
 int Server_Connection_Handle::isConnected(){
-    return secured_status;
+    return connected_status;
 }
 
 
@@ -225,6 +266,21 @@ Returns:
 */
 void Server_Connection_Handle::setAESKey(std::string key){
 	AES_key.assign(key);
+}
+
+
+/*
+setUsername(std::string username)
+
+Sets the username
+
+Arguments:
+    - std::string username
+Returns:
+    none
+*/
+void Server_Connection_Handle::setUsername(std::string id){
+    username.assign(id);
 }
 
 /*

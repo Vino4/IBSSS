@@ -88,8 +88,12 @@ void Client_Handle::processConnection(Client_Handle * client_handle){
 	unsigned char op_code;
 	int read_status;
 	for (;;){	
-		if ((read_status = read(client_descriptor, &op_code, 1)) < 0)
-	            ibsssError("failed to read");
+		if ((read_status = read(client_descriptor, &op_code, 1)) < 0){
+	            std::cout 
+		    <<"[" << getSessionToken()  << "]: Connection Dropped" 
+		    << std::endl;
+		    break;
+		}
 		if (read_status == 0)
 			break;
 		switch(op_code){
@@ -119,7 +123,12 @@ void Client_Handle::processConnection(Client_Handle * client_handle){
                         break;                
 			case IBSSS_OP_FORGOT_USERNAME:
                         operationForgotUsername();
-                        break;                
+                        break;     
+			default:
+			std::cout 
+			<< "[" << getSessionToken() << "]: Unknown Opcode"
+			<< std::endl;
+			break;           
 		}
 	}
 	client_handle->killSession();
@@ -216,7 +225,7 @@ Returns:
 */
 void Client_Handle::generateToken(){
 
-	session_token.resize(IBSSS_SESSION_TOKEN_LENGTH+1, '\0');
+	session_token.resize(IBSSS_SESSION_TOKEN_LENGTH, '\0');
 	
 	for(int i = 0; i < IBSSS_SESSION_TOKEN_LENGTH; i++)
 		session_token[i] = IBSSS_SESSION_TOKEN_ALLOWED_CHARACTERS[rand()%IBSSS_SESSION_TOKEN_CHARACTER_POOL_SIZE];

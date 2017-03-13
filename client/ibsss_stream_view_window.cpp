@@ -13,6 +13,7 @@
 #include <QFinalState>
 #include <QObject>
 #include "ibsss_state_machine_event.h"
+#include "ibsss_stream_display.h"
 
 bool thing = true;
 
@@ -47,7 +48,6 @@ IBSSS_Stream_View_Window::IBSSS_Stream_View_Window(__attribute__((unused)) QAppl
     sections->addAction(ui->actionChange_Password);
 
     connect(sections, SIGNAL(triggered(QAction*)), this, SLOT(showSection(QAction*)));
-
 
     backs->addButton(ui->back);
     backs->addButton(ui->back1);
@@ -118,10 +118,11 @@ void IBSSS_Stream_View_Window::LoadImage(QPixmap file){
     //scene->addPixmap(file2);
 }
 
-
-
 void IBSSS_Stream_View_Window::on_actionLog_out_triggered()
 {
+    connection->operationLogout();
+    connection->killSession();
+    connection->establishDisonnectedStatus();
     state_machine->postEvent(new State_Machine_Event("Logout"));
     this->hide(); //hide streamview window
 }
@@ -155,6 +156,7 @@ void IBSSS_Stream_View_Window::on_changeImageButton_clicked()
     //this->loadImage(file) in the background?
     //std::thread *namee = new std::thread(&StreamViewThreadHandler, this);
     //QThread thready = new QThread(ui->graphicsView);
+    /*
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, [=] () {
         QPixmap file;
@@ -168,4 +170,54 @@ void IBSSS_Stream_View_Window::on_changeImageButton_clicked()
 
     });
     timer->start(250);
+    */
+
+    Stream_Display * sd = new Stream_Display(this);
+    QImage * frame = sd->loadFrameImage("bowlofcereal.jpeg");
+    sd->setFrame(frame);
+    setCentralWidget(sd);
+    frame = sd->loadFrameImage("cereal.jpeg");
+    sd->setFrame(frame);
+
+    thing = (!thing);
+    if(thing){
+        frame = sd->loadFrameImage("cereal.jpeg");
+        sd->setFrame(frame);
+    } else {
+        frame = sd->loadFrameImage("bowlofcereal.jpeg");
+        sd->setFrame(frame);
+    }
+}
+
+
+void IBSSS_Stream_View_Window::setMainPage(){
+    ui->stackedWidget->setCurrentIndex(0);
+}
+
+void IBSSS_Stream_View_Window::on_changePasswordButton_clicked()
+{
+    if (!connection->passwordIsValid(ui->old_pw->text().toStdString())){
+        QMessageBox::information(this, "Failed", QString("Invalid old password - Try Again!"));
+        return;
+    }
+    if (!connection->passwordIsValid(ui->new_pw->text().toStdString())){
+        QMessageBox::information(this, "Error",
+                                    QString("Invalid new password: \n - Must be letters and numbers \n - Must be no less than %1 characters \n - Must be no more than %2 characters")
+                                     .arg(IBSSS_GLOBAL_MINIMUM_PASSWORD_LENGTH).arg(IBSSS_GLOBAL_MAXIMUM_PASSWORD_LENGTH));
+        return;
+    }
+    if(ui->new_pw->text()!=ui->confirm_pw->text()){
+        QMessageBox::information(this, "Failed", QString("New Password must match Confirm Password, Dummy!\n Can't believe i have to tell you this..."));
+        return;
+    }
+
+
+    if (!connection->operationChangePassword(connection->getUsername(), ui->old_pw->text().toStdString(), ui->new_pw->text().toStdString())){
+        QMessageBox::information(this, "Failed",
+                                 QString("Invalid old password - Try Again!"));
+        return;
+    }
+
+    QMessageBox::information(this, "Success", "Password Changed Successfully!");
+
 }

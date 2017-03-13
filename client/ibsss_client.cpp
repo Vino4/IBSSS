@@ -6,7 +6,8 @@
 #include <QFinalState>
 #include <QObject>
 #include "ibsss_state_machine_event.h"
-
+#include <QStyle>
+#include <QDesktopWidget>
 
 void IBSSS_Client::init(QApplication *application_ptr){
 
@@ -58,11 +59,19 @@ int IBSSS_Client::run(){
 }
 
 void IBSSS_Client::login(){
+    stream_view_window->setMainPage();
+    stream_view_window->setGeometry(
+                                        QStyle::alignedRect(
+                                            Qt::LeftToRight,
+                                            Qt::AlignCenter,
+                                            stream_view_window->size(),
+                                            qApp->desktop()->availableGeometry()
+                                        )
+                                   );
     stream_view_window->show();
 }
 
 void IBSSS_Client::logout(){
-    std::cout << "HERE " << std::endl;
     login_window->show();
 
 }

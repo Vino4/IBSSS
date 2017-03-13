@@ -254,7 +254,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButton_2">
+          <widget class="QPushButton" name="changePasswordButton">
            <property name="text">
             <string>Change</string>
            </property>

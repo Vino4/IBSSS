@@ -27,6 +27,7 @@ public:
     explicit IBSSS_Stream_View_Window(QApplication *parent = 0, Server_Connection_Handle * connection_ptr = NULL, QStateMachine * state_machine_ptr = NULL);
     ~IBSSS_Stream_View_Window();
     void LoadImage(QPixmap file);
+    void setMainPage();
 
 private slots:
     void on_actionLog_out_triggered();
@@ -37,6 +38,8 @@ private slots:
     //void on_back_clicked();
 
     void on_changeImageButton_clicked();
+    void on_changePasswordButton_clicked();
+
 
 private:
     Ui::IBSSS_Stream_View_Window_Layout *ui;

@@ -51,6 +51,7 @@ OBJECTS_DIR   = ./
 SOURCES       = ibsss_client.cpp \
 		ibsss_login_window.cpp \
 		ibsss_main.cpp \
+		ibsss_stream_display.cpp \
 		ibsss_stream_view_window.cpp \
 		ibsss_server_connection_handler.cc \
 		ibsss_server_connection_operations.cc \
@@ -60,10 +61,12 @@ SOURCES       = ibsss_client.cpp \
 		../specifications/ibsss_session_token.c moc_ibsss_client.cpp \
 		moc_ibsss_login_window.cpp \
 		moc_ibsss_state_machine_event.cpp \
+		moc_ibsss_stream_display.cpp \
 		moc_ibsss_stream_view_window.cpp
 OBJECTS       = ibsss_client.o \
 		ibsss_login_window.o \
 		ibsss_main.o \
+		ibsss_stream_display.o \
 		ibsss_stream_view_window.o \
 		ibsss_server_connection_handler.o \
 		ibsss_server_connection_operations.o \
@@ -74,6 +77,7 @@ OBJECTS       = ibsss_client.o \
 		moc_ibsss_client.o \
 		moc_ibsss_login_window.o \
 		moc_ibsss_state_machine_event.o \
+		moc_ibsss_stream_display.o \
 		moc_ibsss_stream_view_window.o
 DIST          = ../../Qt5.6.2/5.6/gcc_64/mkspecs/features/spec_pre.prf \
 		../../Qt5.6.2/5.6/gcc_64/mkspecs/common/unix.conf \
@@ -213,10 +217,12 @@ DIST          = ../../Qt5.6.2/5.6/gcc_64/mkspecs/features/spec_pre.prf \
 		ibsss_stream_viewer.pro ibsss_client.h \
 		ibsss_login_window.h \
 		ibsss_state_machine_event.h \
+		ibsss_stream_display.h \
 		ibsss_stream_view_window.h \
 		ibsss_server_connection_handler.hh ibsss_client.cpp \
 		ibsss_login_window.cpp \
 		ibsss_main.cpp \
+		ibsss_stream_display.cpp \
 		ibsss_stream_view_window.cpp \
 		ibsss_server_connection_handler.cc \
 		ibsss_server_connection_operations.cc \
@@ -529,8 +535,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents ibsss_client.h ibsss_login_window.h ibsss_state_machine_event.h ibsss_stream_view_window.h ibsss_server_connection_handler.hh $(DISTDIR)/
-	$(COPY_FILE) --parents ibsss_client.cpp ibsss_login_window.cpp ibsss_main.cpp ibsss_stream_view_window.cpp ibsss_server_connection_handler.cc ibsss_server_connection_operations.cc ../specifications/ibsss_error.cc ../specifications/ibsss_mutex.cc ../specifications/ibsss_op_codes.cc ../specifications/ibsss_session_token.c $(DISTDIR)/
+	$(COPY_FILE) --parents ibsss_client.h ibsss_login_window.h ibsss_state_machine_event.h ibsss_stream_display.h ibsss_stream_view_window.h ibsss_server_connection_handler.hh $(DISTDIR)/
+	$(COPY_FILE) --parents ibsss_client.cpp ibsss_login_window.cpp ibsss_main.cpp ibsss_stream_display.cpp ibsss_stream_view_window.cpp ibsss_server_connection_handler.cc ibsss_server_connection_operations.cc ../specifications/ibsss_error.cc ../specifications/ibsss_mutex.cc ../specifications/ibsss_op_codes.cc ../specifications/ibsss_session_token.c $(DISTDIR)/
 	$(COPY_FILE) --parents ibsss_login_window.ui ibsss_stream_view_window.ui $(DISTDIR)/
 
 
@@ -556,9 +562,9 @@ benchmark: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all: moc_ibsss_client.cpp moc_ibsss_login_window.cpp moc_ibsss_state_machine_event.cpp moc_ibsss_stream_view_window.cpp
+compiler_moc_header_make_all: moc_ibsss_client.cpp moc_ibsss_login_window.cpp moc_ibsss_state_machine_event.cpp moc_ibsss_stream_display.cpp moc_ibsss_stream_view_window.cpp
 compiler_moc_header_clean:
-	-$(DEL_FILE) moc_ibsss_client.cpp moc_ibsss_login_window.cpp moc_ibsss_state_machine_event.cpp moc_ibsss_stream_view_window.cpp
+	-$(DEL_FILE) moc_ibsss_client.cpp moc_ibsss_login_window.cpp moc_ibsss_state_machine_event.cpp moc_ibsss_stream_display.cpp moc_ibsss_stream_view_window.cpp
 moc_ibsss_client.cpp: ibsss_server_connection_handler.hh \
 		../specifications/ibsss_restrictions.h \
 		../specifications/ibsss_op_codes.hh \
@@ -997,6 +1003,135 @@ moc_ibsss_state_machine_event.cpp: ibsss_server_connection_handler.hh \
 		ibsss_state_machine_event.h
 	/home/matt/Qt5.6.2/5.6/gcc_64/bin/moc $(DEFINES) -I/home/matt/Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++ -I/home/matt/IBSSS/client -I/home/matt/IBSSS/specifications -I/home/matt/Qt5.6.2/5.6/gcc_64/include -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtWidgets -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtGui -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtCore ibsss_state_machine_event.h -o moc_ibsss_state_machine_event.cpp
 
+moc_ibsss_stream_display.cpp: ../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QWidget \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qwidget.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qwindowdefs.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qglobal.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qconfig.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfeatures.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qsystemdetection.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qprocessordetection.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qtypeinfo.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qtypetraits.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qisenum.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qsysinfo.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qlogging.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qflags.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qbasicatomic.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qgenericatomic.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_gcc.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_armv7.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_armv6.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_armv5.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_ia64.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_x86.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_unix.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qglobalstatic.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qmutex.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qnumeric.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qversiontagging.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qobjectdefs.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qnamespace.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qwindowdefs_win.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qobject.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qstring.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qchar.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qbytearray.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qrefcount.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qarraydata.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qstringbuilder.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qlist.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qalgorithms.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qiterator.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qhashfunctions.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qpair.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qbytearraylist.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qstringlist.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qregexp.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qstringmatcher.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qcoreevent.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qscopedpointer.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qmetatype.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qvarlengtharray.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qcontainerfwd.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qobject_impl.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qmargins.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpaintdevice.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qrect.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qsize.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qpoint.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpalette.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qcolor.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qrgb.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qrgba64.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qbrush.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qvector.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qmatrix.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpolygon.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qregion.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qdatastream.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qiodevice.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qline.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qtransform.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpainterpath.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qimage.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpixelformat.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpixmap.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qsharedpointer.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qshareddata.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qhash.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qfont.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qfontmetrics.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qfontinfo.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qsizepolicy.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qcursor.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qkeysequence.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qevent.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qvariant.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qmap.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qdebug.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qtextstream.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qlocale.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qset.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qcontiguouscache.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qurl.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qurlquery.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfile.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfiledevice.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qvector2d.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qtouchdevice.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/QImage \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QEvent \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/QPainter \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpainter.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qtextoption.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpen.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/QImageReader \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qimagereader.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qcoreapplication.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qeventloop.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qimageiohandler.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qplugin.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qpointer.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qjsonobject.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qjsonvalue.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfactoryinterface.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QMessageBox \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qmessagebox.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qdialog.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QDir \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qdir.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfileinfo.h \
+		ibsss_stream_display.h
+	/home/matt/Qt5.6.2/5.6/gcc_64/bin/moc $(DEFINES) -I/home/matt/Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++ -I/home/matt/IBSSS/client -I/home/matt/IBSSS/specifications -I/home/matt/Qt5.6.2/5.6/gcc_64/include -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtWidgets -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtGui -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtCore ibsss_stream_display.h -o moc_ibsss_stream_display.cpp
+
 moc_ibsss_stream_view_window.cpp: ../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QMainWindow \
 		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qmainwindow.h \
 		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qwidget.h \
@@ -1307,7 +1442,10 @@ ibsss_client.o: ibsss_client.cpp ibsss_server_connection_handler.hh \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QAbstractTransition \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qabstracttransition.h \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QString \
-		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QEvent
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QEvent \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QStyle \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qstyle.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QDesktopWidget
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ibsss_client.o ibsss_client.cpp
 
 ibsss_login_window.o: ibsss_login_window.cpp ibsss_login_window.h \
@@ -1603,6 +1741,136 @@ ibsss_main.o: ibsss_main.cpp ibsss_client.h \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QEvent
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ibsss_main.o ibsss_main.cpp
 
+ibsss_stream_display.o: ibsss_stream_display.cpp ibsss_stream_display.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QWidget \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qwidget.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qwindowdefs.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qglobal.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qconfig.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfeatures.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qsystemdetection.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qprocessordetection.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qcompilerdetection.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qtypeinfo.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qtypetraits.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qisenum.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qsysinfo.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qlogging.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qflags.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qbasicatomic.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_bootstrap.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qgenericatomic.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_cxx11.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_gcc.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_msvc.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_armv7.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_armv6.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_armv5.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_ia64.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_x86.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qatomic_unix.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qglobalstatic.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qmutex.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qnumeric.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qversiontagging.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qobjectdefs.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qnamespace.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qobjectdefs_impl.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qwindowdefs_win.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qobject.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qstring.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qchar.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qbytearray.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qrefcount.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qarraydata.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qstringbuilder.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qlist.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qalgorithms.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qiterator.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qhashfunctions.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qpair.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qbytearraylist.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qstringlist.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qregexp.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qstringmatcher.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qcoreevent.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qscopedpointer.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qmetatype.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qvarlengtharray.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qcontainerfwd.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qobject_impl.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qmargins.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpaintdevice.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qrect.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qsize.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qpoint.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpalette.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qcolor.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qrgb.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qrgba64.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qbrush.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qvector.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qmatrix.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpolygon.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qregion.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qdatastream.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qiodevice.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qline.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qtransform.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpainterpath.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qimage.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpixelformat.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpixmap.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qsharedpointer.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qshareddata.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qhash.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qsharedpointer_impl.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qfont.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qfontmetrics.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qfontinfo.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qsizepolicy.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qcursor.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qkeysequence.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qevent.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qvariant.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qmap.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qdebug.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qtextstream.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qlocale.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qset.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qcontiguouscache.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qurl.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qurlquery.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfile.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfiledevice.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qvector2d.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qtouchdevice.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/QImage \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QEvent \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/QPainter \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpainter.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qtextoption.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpen.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/QImageReader \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qimagereader.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qcoreapplication.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qeventloop.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qimageiohandler.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qplugin.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qpointer.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qjsonobject.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qjsonvalue.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfactoryinterface.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QMessageBox \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qmessagebox.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qdialog.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QDir \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qdir.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfileinfo.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QString
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ibsss_stream_display.o ibsss_stream_display.cpp
+
 ibsss_stream_view_window.o: ibsss_stream_view_window.cpp ibsss_stream_view_window.h \
 		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QMainWindow \
 		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qmainwindow.h \
@@ -1753,7 +2021,24 @@ ibsss_stream_view_window.o: ibsss_stream_view_window.cpp ibsss_stream_view_windo
 		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qgraphicsitem.h \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QTimer \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qtimer.h \
-		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qbasictimer.h
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qbasictimer.h \
+		ibsss_stream_display.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QWidget \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/QImage \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/QPainter \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qpainter.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qtextoption.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/QImageReader \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qimagereader.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtGui/qimageiohandler.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qplugin.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qpointer.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qjsonobject.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qjsonvalue.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfactoryinterface.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QDir \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qdir.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfileinfo.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ibsss_stream_view_window.o ibsss_stream_view_window.cpp
 
 ibsss_server_connection_handler.o: ibsss_server_connection_handler.cc ../specifications/ibsss_restrictions.h \
@@ -1792,6 +2077,9 @@ moc_ibsss_login_window.o: moc_ibsss_login_window.cpp
 
 moc_ibsss_state_machine_event.o: moc_ibsss_state_machine_event.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_ibsss_state_machine_event.o moc_ibsss_state_machine_event.cpp
+
+moc_ibsss_stream_display.o: moc_ibsss_stream_display.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_ibsss_stream_display.o moc_ibsss_stream_display.cpp
 
 moc_ibsss_stream_view_window.o: moc_ibsss_stream_view_window.cpp 
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_ibsss_stream_view_window.o moc_ibsss_stream_view_window.cpp

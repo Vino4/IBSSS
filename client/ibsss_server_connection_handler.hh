@@ -178,6 +178,16 @@ class Server_Connection_Handle{
 		*/
 		std::string getSessionToken();
 		
+        /*
+        getUsername()
+
+        Arguments:
+            none
+        Returns:
+            std::string username
+        */
+        std::string getUsername();
+
 		/*
 		setConnectionDescriptor()
 		      
@@ -214,8 +224,28 @@ class Server_Connection_Handle{
 			none
 		*/
 		void establishSecuredStatus();
-	
+        /*
+        Client_Handle::establishDisonnected()
 
+        Disables the connected flag
+
+        Arguments:
+            none
+        Returns:
+            none
+        */
+        void establishDisonnectedStatus();
+        /*
+        Client_Handle::establishConnected()
+
+        Enables the connected flag
+
+        Arguments:
+            none
+        Returns:
+            none
+        */
+        void establishConnectedStatus();
         /*
         isConnected();
         Gets connection status
@@ -265,6 +295,18 @@ class Server_Connection_Handle{
 			none
 		*/
 		void setAESKey(std::string key);
+
+        /*
+        setUsername(std::string username)
+
+        Sets the username
+
+        Arguments:
+            - std::string username
+        Returns:
+            none
+        */
+        void setUsername(std::string key);
 
 		/*
 		Server_Handle::usernameIsValid()

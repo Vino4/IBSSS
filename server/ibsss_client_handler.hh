@@ -30,6 +30,8 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <algorithm>
 #include <ibsss_error.hh>
 
+#define ibsssConnectionDropped(statement) std::cout << statement << std::endl; break
+
 #define ibsssReadMessage(descriptor, buffer, length, status)		\
 												\
 	if ((status = read(descriptor, buffer, length)) < 0)			\
