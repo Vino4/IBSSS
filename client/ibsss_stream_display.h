@@ -9,8 +9,8 @@
 #include <QMessageBox>
 #include <QDir>
 
-// We tried multiple ways of rendering the footage, this is the fastest we found
-// inspired by the following stackoverflow post 
+// We tried multiple ways of rendering the footage, this is the fastest we managed to create
+// the we decided not to use ::scaled do to it's slow performance, this decided was inspired by the following stackoverflow post
 // http://stackoverflow.com/questions/22353080/efficient-way-of-displaying-a-continuous-stream-of-qimages
 
 class Stream_Display : public QWidget {
@@ -19,10 +19,11 @@ class Stream_Display : public QWidget {
 	
 	public:
 		Stream_Display(QWidget* parent = 0);
-		void setFrame(QImage* image);
-		QImage * loadFrameImage(const QString &fileName);
-	private:
-		QImage* frame;
+        void displayFrameFromBuffer();
+        bool loadFrameToBuffer(const QString &fileName);
+    private:
+        QImage* frame;
+        QImage* frame_buffer;
 
 	protected:
 		void paintEvent(QPaintEvent* event);

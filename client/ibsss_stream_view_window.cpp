@@ -103,17 +103,17 @@ void IBSSS_Stream_View_Window::LoadImage(QPixmap file){
 
 //    int width = ui->graphicsView->geometry().width();
 //    int height = ui->graphicsView->geometry().height();
-    scene = new QGraphicsScene();
+    //scene = new QGraphicsScene();
     //scene = new QGraphicsScene(QRectF(0,0, width, height),0);
 
 //    QGraphicsPixmapItem *item = scene->addPixmap(file.scaled(QSize()))
  //   ui->graphicsView->fitInView(QRectF(0,0,width,height),Qt::KeepAspectRatio);
-    ui->graphicsView->setScene(scene);
+    //ui->graphicsView->setScene(scene);
 
     //QGraphicsPixmapItem img(file);
     //clock_t start_time = clock();
 
-    scene->addPixmap(file);
+    //scene->addPixmap(file);
     //sleep(3);
     //scene->addPixmap(file2);
 }
@@ -171,22 +171,12 @@ void IBSSS_Stream_View_Window::on_changeImageButton_clicked()
     });
     timer->start(250);
     */
-
-    Stream_Display * sd = new Stream_Display(this);
-    QImage * frame = sd->loadFrameImage("bowlofcereal.jpeg");
-    sd->setFrame(frame);
-    setCentralWidget(sd);
-    frame = sd->loadFrameImage("cereal.jpeg");
-    sd->setFrame(frame);
-
-    thing = (!thing);
-    if(thing){
-        frame = sd->loadFrameImage("cereal.jpeg");
-        sd->setFrame(frame);
-    } else {
-        frame = sd->loadFrameImage("bowlofcereal.jpeg");
-        sd->setFrame(frame);
+    while (1){
+        ui->Display_1->repaint();
     }
+
+
+
 }
 
 
