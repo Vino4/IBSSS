@@ -312,7 +312,6 @@
     <addaction name="actionChange_Password"/>
     <addaction name="separator"/>
     <addaction name="actionLog_out"/>
-    <addaction name="actionQuit"/>
    </widget>
    <addaction name="settingsMenu"/>
   </widget>

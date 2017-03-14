@@ -7,6 +7,8 @@
 #include <QImageReader>
 #include <QMessageBox>
 #include <QDir>
+#include <QTcpSocket>
+
 bool testing_bool = true;
 
 // We tried multiple ways of rendering the footage, this is the fastest we managed to create
@@ -14,6 +16,10 @@ bool testing_bool = true;
 // http://stackoverflow.com/questions/22353080/efficient-way-of-displaying-a-continuous-stream-of-qimages
 
 Stream_Display::Stream_Display(QWidget *parent) : QWidget(parent) {
+  connection = new QTcpSocket();
+
+  connect(connection, SIGNAL(connected()), this, SLOT(gotcha()));
+
   frame_buffer = new QImage();
   frame = 0;
   setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
@@ -36,6 +42,11 @@ void Stream_Display::paintEvent(QPaintEvent*) {
   if (!frame) { return; }
   QPainter painter(this);
   painter.drawImage(rect(), *frame, frame->rect());
+}
+
+void Stream_Display::gotcha(){
+    QMessageBox::information(this, "KENNACTED",
+    QString("FAK YEEE"));
 }
 
 bool Stream_Display::loadFrameToBuffer(const QString &fileName){

@@ -8,6 +8,7 @@
 #include <QImageReader>
 #include <QMessageBox>
 #include <QDir>
+#include <QTcpSocket>
 
 // We tried multiple ways of rendering the footage, this is the fastest we managed to create
 // the we decided not to use ::scaled do to it's slow performance, this decided was inspired by the following stackoverflow post
@@ -21,6 +22,10 @@ class Stream_Display : public QWidget {
 		Stream_Display(QWidget* parent = 0);
         void displayFrameFromBuffer();
         bool loadFrameToBuffer(const QString &fileName);
+        QTcpSocket * connection;
+    public slots:
+        void gotcha();
+
     private:
         QImage* frame;
         QImage* frame_buffer;

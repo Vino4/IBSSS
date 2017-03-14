@@ -12,10 +12,10 @@ MAKEFILE      = Makefile
 
 CC            = gcc
 CXX           = g++
-DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB
+DEFINES       = -DQT_QML_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_NETWORK_LIB -DQT_CORE_LIB
 CFLAGS        = -pipe -g -Wall -W -D_REENTRANT -fPIC $(DEFINES)
 CXXFLAGS      = -pipe -g -std=gnu++0x -Wall -W -D_REENTRANT -fPIC $(DEFINES)
-INCPATH       = -I. -I../specifications -I../../Qt5.6.2/5.6/gcc_64/include -I../../Qt5.6.2/5.6/gcc_64/include/QtWidgets -I../../Qt5.6.2/5.6/gcc_64/include/QtGui -I../../Qt5.6.2/5.6/gcc_64/include/QtCore -I. -I. -I../../Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++
+INCPATH       = -I. -I../specifications -I../../Qt5.6.2/5.6/gcc_64/include -I../../Qt5.6.2/5.6/gcc_64/include/QtWidgets -I../../Qt5.6.2/5.6/gcc_64/include/QtGui -I../../Qt5.6.2/5.6/gcc_64/include/QtNetwork -I../../Qt5.6.2/5.6/gcc_64/include/QtCore -I. -I. -I../../Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++
 QMAKE         = /home/matt/Qt5.6.2/5.6/gcc_64/bin/qmake
 DEL_FILE      = rm -f
 CHK_DIR_EXISTS= test -d
@@ -36,7 +36,7 @@ DISTNAME      = Client1.0.0
 DISTDIR = /home/matt/IBSSS/client/.tmp/Client1.0.0
 LINK          = g++
 LFLAGS        = -Wl,-rpath,/home/matt/Qt5.6.2/5.6/gcc_64/lib
-LIBS          = $(SUBLIBS) -L/home/matt/Qt5.6.2/5.6/gcc_64/lib -lQt5Widgets -L/usr/lib64 -lQt5Gui -lQt5Core -lGL -lpthread 
+LIBS          = $(SUBLIBS) -L/home/matt/Qt5.6.2/5.6/gcc_64/lib -lQt5Widgets -L/usr/lib64 -lQt5Gui -lQt5Network -lQt5Core -lGL -lpthread 
 AR            = ar cqs
 RANLIB        = 
 SED           = sed
@@ -380,6 +380,7 @@ Makefile: ibsss_stream_viewer.pro ../../Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++/qma
 		ibsss_stream_viewer.pro \
 		../../Qt5.6.2/5.6/gcc_64/lib/libQt5Widgets.prl \
 		../../Qt5.6.2/5.6/gcc_64/lib/libQt5Gui.prl \
+		../../Qt5.6.2/5.6/gcc_64/lib/libQt5Network.prl \
 		../../Qt5.6.2/5.6/gcc_64/lib/libQt5Core.prl
 	$(QMAKE) -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug -o Makefile ibsss_stream_viewer.pro
 ../../Qt5.6.2/5.6/gcc_64/mkspecs/features/spec_pre.prf:
@@ -520,6 +521,7 @@ Makefile: ibsss_stream_viewer.pro ../../Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++/qma
 ibsss_stream_viewer.pro:
 ../../Qt5.6.2/5.6/gcc_64/lib/libQt5Widgets.prl:
 ../../Qt5.6.2/5.6/gcc_64/lib/libQt5Gui.prl:
+../../Qt5.6.2/5.6/gcc_64/lib/libQt5Network.prl:
 ../../Qt5.6.2/5.6/gcc_64/lib/libQt5Core.prl:
 qmake: FORCE
 	@$(QMAKE) -spec linux-g++ CONFIG+=debug CONFIG+=qml_debug -o Makefile ibsss_stream_viewer.pro
@@ -709,7 +711,7 @@ moc_ibsss_client.cpp: ibsss_server_connection_handler.hh \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QString \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QEvent \
 		ibsss_client.h
-	/home/matt/Qt5.6.2/5.6/gcc_64/bin/moc $(DEFINES) -I/home/matt/Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++ -I/home/matt/IBSSS/client -I/home/matt/IBSSS/specifications -I/home/matt/Qt5.6.2/5.6/gcc_64/include -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtWidgets -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtGui -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtCore ibsss_client.h -o moc_ibsss_client.cpp
+	/home/matt/Qt5.6.2/5.6/gcc_64/bin/moc $(DEFINES) -I/home/matt/Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++ -I/home/matt/IBSSS/client -I/home/matt/IBSSS/specifications -I/home/matt/Qt5.6.2/5.6/gcc_64/include -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtWidgets -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtGui -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtNetwork -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtCore ibsss_client.h -o moc_ibsss_client.cpp
 
 moc_ibsss_login_window.cpp: ../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QDialog \
 		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qdialog.h \
@@ -855,7 +857,7 @@ moc_ibsss_login_window.cpp: ../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QDialog \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QString \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QEvent \
 		ibsss_login_window.h
-	/home/matt/Qt5.6.2/5.6/gcc_64/bin/moc $(DEFINES) -I/home/matt/Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++ -I/home/matt/IBSSS/client -I/home/matt/IBSSS/specifications -I/home/matt/Qt5.6.2/5.6/gcc_64/include -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtWidgets -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtGui -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtCore ibsss_login_window.h -o moc_ibsss_login_window.cpp
+	/home/matt/Qt5.6.2/5.6/gcc_64/bin/moc $(DEFINES) -I/home/matt/Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++ -I/home/matt/IBSSS/client -I/home/matt/IBSSS/specifications -I/home/matt/Qt5.6.2/5.6/gcc_64/include -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtWidgets -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtGui -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtNetwork -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtCore ibsss_login_window.h -o moc_ibsss_login_window.cpp
 
 moc_ibsss_state_machine_event.cpp: ibsss_server_connection_handler.hh \
 		../specifications/ibsss_restrictions.h \
@@ -1001,7 +1003,7 @@ moc_ibsss_state_machine_event.cpp: ibsss_server_connection_handler.hh \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QString \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QEvent \
 		ibsss_state_machine_event.h
-	/home/matt/Qt5.6.2/5.6/gcc_64/bin/moc $(DEFINES) -I/home/matt/Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++ -I/home/matt/IBSSS/client -I/home/matt/IBSSS/specifications -I/home/matt/Qt5.6.2/5.6/gcc_64/include -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtWidgets -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtGui -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtCore ibsss_state_machine_event.h -o moc_ibsss_state_machine_event.cpp
+	/home/matt/Qt5.6.2/5.6/gcc_64/bin/moc $(DEFINES) -I/home/matt/Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++ -I/home/matt/IBSSS/client -I/home/matt/IBSSS/specifications -I/home/matt/Qt5.6.2/5.6/gcc_64/include -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtWidgets -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtGui -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtNetwork -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtCore ibsss_state_machine_event.h -o moc_ibsss_state_machine_event.cpp
 
 moc_ibsss_stream_display.cpp: ../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QWidget \
 		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qwidget.h \
@@ -1129,8 +1131,11 @@ moc_ibsss_stream_display.cpp: ../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QWidget
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QDir \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qdir.h \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfileinfo.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtNetwork/QTcpSocket \
+		../../Qt5.6.2/5.6/gcc_64/include/QtNetwork/qtcpsocket.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtNetwork/qabstractsocket.h \
 		ibsss_stream_display.h
-	/home/matt/Qt5.6.2/5.6/gcc_64/bin/moc $(DEFINES) -I/home/matt/Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++ -I/home/matt/IBSSS/client -I/home/matt/IBSSS/specifications -I/home/matt/Qt5.6.2/5.6/gcc_64/include -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtWidgets -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtGui -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtCore ibsss_stream_display.h -o moc_ibsss_stream_display.cpp
+	/home/matt/Qt5.6.2/5.6/gcc_64/bin/moc $(DEFINES) -I/home/matt/Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++ -I/home/matt/IBSSS/client -I/home/matt/IBSSS/specifications -I/home/matt/Qt5.6.2/5.6/gcc_64/include -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtWidgets -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtGui -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtNetwork -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtCore ibsss_stream_display.h -o moc_ibsss_stream_display.cpp
 
 moc_ibsss_stream_view_window.cpp: ../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QMainWindow \
 		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qmainwindow.h \
@@ -1276,7 +1281,7 @@ moc_ibsss_stream_view_window.cpp: ../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/QMa
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QString \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QEvent \
 		ibsss_stream_view_window.h
-	/home/matt/Qt5.6.2/5.6/gcc_64/bin/moc $(DEFINES) -I/home/matt/Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++ -I/home/matt/IBSSS/client -I/home/matt/IBSSS/specifications -I/home/matt/Qt5.6.2/5.6/gcc_64/include -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtWidgets -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtGui -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtCore ibsss_stream_view_window.h -o moc_ibsss_stream_view_window.cpp
+	/home/matt/Qt5.6.2/5.6/gcc_64/bin/moc $(DEFINES) -I/home/matt/Qt5.6.2/5.6/gcc_64/mkspecs/linux-g++ -I/home/matt/IBSSS/client -I/home/matt/IBSSS/specifications -I/home/matt/Qt5.6.2/5.6/gcc_64/include -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtWidgets -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtGui -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtNetwork -I/home/matt/Qt5.6.2/5.6/gcc_64/include/QtCore ibsss_stream_view_window.h -o moc_ibsss_stream_view_window.cpp
 
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
@@ -1413,7 +1418,10 @@ ui_ibsss_stream_view_window.h: ibsss_stream_view_window.ui \
 		../../Qt5.6.2/5.6/gcc_64/include/QtWidgets/qdialog.h \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QDir \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qdir.h \
-		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfileinfo.h
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfileinfo.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtNetwork/QTcpSocket \
+		../../Qt5.6.2/5.6/gcc_64/include/QtNetwork/qtcpsocket.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtNetwork/qabstractsocket.h
 	/home/matt/Qt5.6.2/5.6/gcc_64/bin/uic ibsss_stream_view_window.ui -o ui_ibsss_stream_view_window.h
 
 compiler_yacc_decl_make_all:
@@ -1995,6 +2003,9 @@ ibsss_stream_display.o: ibsss_stream_display.cpp ibsss_stream_display.h \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QDir \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qdir.h \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfileinfo.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtNetwork/QTcpSocket \
+		../../Qt5.6.2/5.6/gcc_64/include/QtNetwork/qtcpsocket.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtNetwork/qabstractsocket.h \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QString
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ibsss_stream_display.o ibsss_stream_display.cpp
 
@@ -2165,7 +2176,10 @@ ibsss_stream_view_window.o: ibsss_stream_view_window.cpp ibsss_stream_view_windo
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfactoryinterface.h \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/QDir \
 		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qdir.h \
-		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfileinfo.h
+		../../Qt5.6.2/5.6/gcc_64/include/QtCore/qfileinfo.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtNetwork/QTcpSocket \
+		../../Qt5.6.2/5.6/gcc_64/include/QtNetwork/qtcpsocket.h \
+		../../Qt5.6.2/5.6/gcc_64/include/QtNetwork/qabstractsocket.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o ibsss_stream_view_window.o ibsss_stream_view_window.cpp
 
 ibsss_server_connection_handler.o: ibsss_server_connection_handler.cc ../specifications/ibsss_restrictions.h \

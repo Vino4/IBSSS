@@ -62,7 +62,7 @@ IBSSS_Stream_View_Window::IBSSS_Stream_View_Window(__attribute__((unused)) QAppl
 
 
     //QStringList listy; // = new QStringList();
-    listy<<"hello"<<"is this working?"<<"Idontknow"<<"1"<<"2"<<"3";
+    listy << "hello" << "is this working?" << "Idontknow" << "1" << "2" << "3";
     //QString county = QString::number(listy.count());
     //QMessageBox::information(this, "titlee", county);
     //ui->tableWidget->insertColumn(1);
@@ -171,12 +171,12 @@ void IBSSS_Stream_View_Window::on_changeImageButton_clicked()
     });
     timer->start(250);
     */
+
     while (1){
         ui->Display_1->repaint();
     }
 
-
-
+    //ui->Display_1->connection->connectToHost("localhost", 4774);
 }
 
 
