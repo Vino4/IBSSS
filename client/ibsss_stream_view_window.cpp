@@ -17,7 +17,7 @@
 
 bool thing = true;
 
-IBSSS_Stream_View_Window::IBSSS_Stream_View_Window(__attribute__((unused)) QApplication *parent, Server_Connection_Handle * connection_ptr, QStateMachine * state_machine_ptr) :
+IBSSS_Stream_View_Window::IBSSS_Stream_View_Window(QApplication *parent, Server_Connection_Handle * connection_ptr, QStateMachine * state_machine_ptr) :
     QMainWindow(NULL),
     ui(new Ui::IBSSS_Stream_View_Window_Layout),
     sections(new QActionGroup(this)),
@@ -41,6 +41,8 @@ IBSSS_Stream_View_Window::IBSSS_Stream_View_Window(__attribute__((unused)) QAppl
     ui->actionManage_Streams->setData(2);
     ui->actionManage_Users->setData(3);
     ui->actionChange_Password->setData(4);
+
+
 
     sections->addAction(ui->actionAdd_Stream);
     sections->addAction(ui->actionManage_Streams);
@@ -67,11 +69,14 @@ IBSSS_Stream_View_Window::IBSSS_Stream_View_Window(__attribute__((unused)) QAppl
     //QMessageBox::information(this, "titlee", county);
     //ui->tableWidget->insertColumn(1);
     //ui->tableWidget->se
-
+    //ui->tableWidget->setSelectionMode(single);
     //QCheckBox *me = new QCheckBox();
 
     int i;
     for(i=0; i<listy.count(); i++){
+
+        ui->userList->insertItem(i, listy[i]);
+
         ui->tableWidget->insertRow(i);
         ui->tableWidget->setItem(i, 0, new QTableWidgetItem(listy[i]));
         //QString name = "checkbox"+i;

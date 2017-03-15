@@ -28,7 +28,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <ibsss_error.hh>
 #include <netdb.h>
 
-#define IBSSS_DEFAULT_HOSTNAME "128.223.6.25"
+#define IBSSS_DEFAULT_HOSTNAME "localhost"
 #define IBSSS_DEFAULT_PORT 4774
 
 #define ibsssReadMessage(descriptor, buffer, length, status)		\
@@ -58,6 +58,10 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 	<< length << "]: "								\
 	<< message										\
 	<< std::endl;
+
+//other IP address when not localhost
+//"128.223.6.25"
+
 
 /*
 Server Connection Handle classs
