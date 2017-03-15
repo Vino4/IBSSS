@@ -1,7 +1,15 @@
 /* 
+IBSSS Node Server
+
+This file runs the ibsss server
+The ibsss server manages the following:
+	- Users, streams, stream keys and access control
+	- Communication protocal
+=======
 IBSSS NodeServer
 
 This file runs the ibsss serve noder
+>>>>>>> 7a7cd6e3f74c4c25b9188cf2c21d98a79461821c
 
 Authors:
 Matt Almenshad | Andrew Gao | Jenny Horn 
