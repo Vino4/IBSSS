@@ -58,35 +58,17 @@ IBSSS_Stream_View_Window::IBSSS_Stream_View_Window(QApplication *parent, Server_
 
     connect(backs, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(backToStreamview()));
 
-
-    //I guess do it here? for whichever streams the viewer has, add them to graphics views on [page0] and to the listView [page2]
-    //    ui->streamsList->addItem(stream);
-
-
-    //QStringList listy; // = new QStringList();
-    listy << "hello" << "is this working?" << "Idontknow" << "1" << "2" << "3";
-    //QString county = QString::number(listy.count());
-    //QMessageBox::information(this, "titlee", county);
-    //ui->tableWidget->insertColumn(1);
-    //ui->tableWidget->se
-    //ui->tableWidget->setSelectionMode(single);
-    //QCheckBox *me = new QCheckBox();
+    //hard-coded sample list of users to fill list view in Manage Users page
+    userlist << "user1" << "user2" << "user3" << "user4" << "user5" << "user6";
 
     int i;
-    for(i=0; i<listy.count(); i++){
+    for(i=0; i<userlist.count(); i++){
 
-        ui->userList->insertItem(i, listy[i]);
-
-        ui->tableWidget->insertRow(i);
-        ui->tableWidget->setItem(i, 0, new QTableWidgetItem(listy[i]));
-        //QString name = "checkbox"+i;
-        //ui->tableWidget->setItem(i, 1, new QTableWidgetItem(new QCheckBox));
+        //fill list with users
+        ui->userList->insertItem(i, userlist[i]);
     }
-    //listy.count()
+    connect(ui->userList, SIGNAL(itemSelectionChanged()), this, SLOT(enableOptions()));
 
-    //ui->streamsList->setAlternatingRowColors(true); //alternating colors for items in streamsList in Manage Streams page
-    //ui->streamsList->setSelectionBehavior(QAbstractItemView::SelectionBehavior behavior);
-    //ui->tableWidget->setAlternatingRowColors();
 }
 
 IBSSS_Stream_View_Window::~IBSSS_Stream_View_Window()
@@ -214,5 +196,27 @@ void IBSSS_Stream_View_Window::on_changePasswordButton_clicked()
     }
 
     QMessageBox::information(this, "Success", "Password Changed Successfully!");
+
+}
+
+void IBSSS_Stream_View_Window::enableOptions()
+{
+    if(ui->userList->currentItem()->isSelected())
+    {
+        ui->mu_promote_button->setEnabled(true);
+        ui->mu_deleteuser_button->setEnabled(true);
+        ui->mu_demote_button->setEnabled(true);
+        ui->mu_email_button->setEnabled(true);
+        ui->lmu_pwreset_button->setEnabled(true);
+
+    }
+    else
+    {
+        ui->mu_promote_button->setEnabled(false);
+        ui->mu_deleteuser_button->setEnabled(false);
+        ui->mu_demote_button->setEnabled(false);
+        ui->mu_email_button->setEnabled(false);
+        ui->lmu_pwreset_button->setEnabled(false);
+    }
 
 }

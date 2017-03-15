@@ -39,14 +39,14 @@ private slots:
 
     void on_changeImageButton_clicked();
     void on_changePasswordButton_clicked();
-
+    void enableOptions();
 
 private:
     Ui::IBSSS_Stream_View_Window_Layout *ui;
 
     QActionGroup* sections;
     QButtonGroup* backs;
-    QStringList listy;
+    QStringList userlist;
 
     QGraphicsScene *scene;
 
