@@ -13,7 +13,7 @@ CRYPTO_LIBRARIES = -lcryptopp
 CLIENT_LIBRARIES = 
 server_inc = -Ispecifications
 client_inc = -Ispecifications 
-crypto_inc = -Ispecifications -I/usr/include/cryptopp
+crypto_inc = -Ispecifications 
 EXECUTABLES = Server
 
 IBSSS : $(EXECUTABLES)
