@@ -1,16 +1,19 @@
-SERVER_OBJECTS = server.o ibsss_server.o ibsss_session_token.o ibsss_client_handler.o ibsss_error.o ibsss_mutex.o ibsss_op_codes.o ibsss_database_handler.o ibsss_client_operations.o
-CLIENT_OBJECTS = client.o ibsss_server_connection_handler.o ibsss_server_connection_operations.o ibsss_error.o ibsss_mutex.o ibsss_op_codes.o ibsss_session_token.o 
+SERVER_OBJECTS = server.o ibsss_server.o ibsss_session_token.o ibsss_client_handler.o ibsss_error.o ibsss_mutex.o ibsss_op_codes.o ibsss_database_handler.o ibsss_client_operations.o ibsss_crypto.o
+CLIENT_OBJECTS = client.o ibsss_server_connection_handler.o ibsss_server_connection_operations.o ibsss_error.o ibsss_mutex.o ibsss_op_codes.o ibsss_session_token.o ibsss_cypto.o 
 CC = g++
 DEBUG = -g
 CFLAGS = -std=c++11 -Wall -c $(DEBUG)
 LFLAGS = -std=c++11 -Wall $(DEBUG)
 server_dir = server/
+crypto_dir = crypto/
 client_dir = client/
 spec_dir = specifications/
-SERVER_LIBRARIES = -lpthread -lsqlite3
+SERVER_LIBRARIES = -lpthread -lsqlite3 -lcryptopp
+CRYPTO_LIBRARIES = -lcryptopp
 CLIENT_LIBRARIES = 
 server_inc = -Ispecifications
-client_inc = -Ispecifications
+client_inc = -Ispecifications 
+crypto_inc = -Ispecifications -I/usr/include/cryptopp
 EXECUTABLES = Server
 
 IBSSS : $(EXECUTABLES)
@@ -47,6 +50,9 @@ ibsss_mutex.o :
 
 ibsss_error.o :
 	$(CC) $(CFLAGS) $(addprefix $(spec_dir), $(basename $@).cc)
+
+ibsss_crypto.o :
+		$(CC) $(CFLAGS) $(crypto_inc) $(addprefix $(crypto_dir), $(basename $@).cpp) $(CRYPTO_LIBRARIES) 
 
 client.o : ibsss_server_connection_handler.o ibsss_server_connection_operations.o
 	$(CC) $(CFLAGS) $(client_inc) $(addprefix $(client_dir), $(basename $@).cc)
