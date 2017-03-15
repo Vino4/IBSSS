@@ -14,6 +14,6 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <mutex>
 
 extern std::mutex IBSSS_KILL_SESSION_MUTEX;
-
+extern std::mutex IBSSS_STREAM_CONNECTION_MUTEX;
 #endif /*_IBSSS_MUTEX*/
 
