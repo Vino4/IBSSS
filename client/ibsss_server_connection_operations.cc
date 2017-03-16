@@ -34,21 +34,28 @@ int Server_Connection_Handle::operationHello(){
 	char operation_status;
 
 	//TODO: generate AES key and send it
-    generate_random_key(AES_key);
+    //generate_random_key(AES_key);
+    for (int i = 0; i < 32; i++)
+        AES_key[i] = '4';
 
-    std::string AES_key_str = std::string(AES_key, AES_key+4);
+    std::string AES_key_str = std::string(AES_key, AES_key+IBSSS_KEY_SIZE);
 	// Remeber the AES key
 	setAESKey(AES_key_str);
-
+    std::cout << "KEy PRE: " << AES_key_str << std::endl;
+    int pre_length = AES_key_str.length();
     std::string AES_key_encrypted_str = RSA_encrypt(AES_key_str);
+    std::cout << "KEy Post" << AES_key_encrypted_str << std::endl;
     length = AES_key_encrypted_str.length();
+    std::cout << "Length: " << length << std::endl;
+    std::cout << "Length: " << pre_length << std::endl;
 
 	// Send Op Code to server
 	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_HELLO, 1, write_status);
 
 	// send length and aes_key
 	ibsssWriteMessage(server_connection_descriptor, &length, sizeof(length), write_status);
-	ibsssWriteMessage(server_connection_descriptor, &AES_key_encrypted_str[0], length, write_status);
+    std::cout << "here " << std::endl;
+    ibsssWriteMessage(server_connection_descriptor, &AES_key_encrypted_str[0], length, write_status);
 
 	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
 
@@ -77,9 +84,9 @@ int Server_Connection_Handle::operationCreateUser(std::string username, std::str
 	unsigned char receivedIV[IBSSS_NONCE_SIZE];
 	std::string received_session_token;
 
-	std::string username_encrypt = encrypt_decrypt(username, (unsigned char) (&(getAESkey()[0])), iv);
-	std::string password_encrypt = encrypt_decrypt(password, (unsigned char) (&(getAESkey()[0])), iv);
-	std::string email_encrypt = encrypt_decrypt(email, (unsigned char) (&(getAESkey()[0])), iv);
+    std::string username_encrypt = encrypt_decrypt(username, (unsigned char *) (&(getAESKey()[0])), iv);
+    std::string password_encrypt = encrypt_decrypt(password, (unsigned char *) (&(getAESKey()[0])), iv);
+    std::string email_encrypt = encrypt_decrypt(email, (unsigned char *) (&(getAESKey()[0])), iv);
 
 	int username_length = username_encrypt.length();
 	int password_length = password_encrypt.length();
@@ -123,7 +130,7 @@ int Server_Connection_Handle::operationCreateUser(std::string username, std::str
 
 			ibsssReadMessage(server_connection_descriptor, &received_session_token[0], IBSSS_SESSION_TOKEN_LENGTH, 
 						read_status);
-			session_token = encrypt_decrypt(username, (unsigned char) (&(getAESkey()[0])), receivedIV);
+            session_token = encrypt_decrypt(username, (unsigned char *) (&(getAESKey()[0])), receivedIV);
 			std::cout << "got session token: " << session_token << std::endl;
 			establishLoggedinStatus();
 			return 1;
@@ -147,11 +154,11 @@ int Server_Connection_Handle::operationLogin(std::string username, std::string p
 	unsigned char iv[IBSSS_NONCE_SIZE];	
 	generate_random_iv(iv);
 
-	std::string username_encrypt = encrypt_decrypt(username, (unsigned char) (&(getAESkey()[0])), iv);
-	std::string password_encrypt = encrypt_decrypt(password, (unsigned char) (&(getAESkey()[0])), iv);
+    std::string username_encrypt = encrypt_decrypt(username, (unsigned char *) (&(getAESKey()[0])), iv);
+    std::string password_encrypt = encrypt_decrypt(password, (unsigned char *) (&(getAESKey()[0])), iv);
 
 	int username_length = username_encrypt.length();
-	int password_length = password_encypt.length();
+    int password_length = password_encrypt.length();
 	
 	// Send Op Code to server
 	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_LOGIN, 1, write_status);
@@ -221,7 +228,7 @@ int Server_Connection_Handle::operationLogout() {
 	unsigned char iv[IBSSS_NONCE_SIZE];	
 	generate_random_iv(iv);
 
-	std::string session_token_encrypt = encrypt_decrypt(getSessionToken(), (unsigned char) (&(getAESkey()[0])), iv);
+    std::string session_token_encrypt = encrypt_decrypt(getSessionToken(), (unsigned char *) (&(getAESKey()[0])), iv);
 	
 	// Send Op Code to server
 	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_LOGOUT , 1, write_status);

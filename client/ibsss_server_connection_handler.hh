@@ -301,6 +301,19 @@ class Server_Connection_Handle{
 		void setAESKey(std::string key);
 
         /*
+        getAESKey(std::string key)
+
+        returns the symetric encryption key
+
+        Arguments:
+            none
+        Returns:
+            - std::string key, the symetric AES key
+        */
+        std::string getAESKey();
+
+
+        /*
         setUsername(std::string username)
 
         Sets the username
