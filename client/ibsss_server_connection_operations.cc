@@ -184,8 +184,13 @@ int Server_Connection_Handle::operationLogin(std::string username, std::string p
 	switch (operation_status) {
 		case IBSSS_OP_SUCCESS:
 			session_token.resize(IBSSS_SESSION_TOKEN_LENGTH);
-			ibsssReadMessage(server_connection_descriptor, &session_token[0], IBSSS_SESSION_TOKEN_LENGTH, 
+			
+			// read the IV
+			ibsssReadMessage(server_connection_descriptor, &receivedIV[0], IBSSS_NONCE_SIZE, read_status)
+			
+			ibsssReadMessage(server_connection_descriptor, &received_session_token[0], IBSSS_SESSION_TOKEN_LENGTH, 
 						read_status);
+						
 			std::cout << "got session token: " << session_token << std::endl;
 			establishLoggedinStatus();
 			return 1;

@@ -125,9 +125,9 @@ void Client_Handle::operationCreateUser() {
 		return;
 	}
 	
-	std::string username;
-	std::string password;
-	std::string email;
+	std::string username_encrypt;
+	std::string password_encrypt;
+	std::string email_encrypt;
 
 	int username_length;
 	int password_length;
@@ -135,15 +135,26 @@ void Client_Handle::operationCreateUser() {
 
 	int operation_successful = 0;
 
+	unsigned char received_iv[IBSSS_NONCE_SIZE];
+	unsigned char sent_iv[IBSSS_NONCE_SIZE];
+
+	generate_random_iv(sent_iv);	
+
+	// read the IV
+	ibsssReadMessage(client_descriptor, received_iv, IBSSS_NONCE_SIZE, read_status);
+
 	//read the length of the username, if operation fails issue ibsssError	
 	ibsssReadMessage(client_descriptor, &username_length, 4, read_status);
 
 	//read the username 
 	username.resize(username_length);
-	ibsssReadMessage(client_descriptor, &username[0], username_length, read_status);
+	ibsssReadMessage(client_descriptor, &username_encrypt[0], username_length, read_status);
 	
-	//put string termination character at the end of the string	
-	username[username_length] = '\0';		
+	//decrypt the username
+	std::string username = encrypt_decrypt(username_encrypt, (unsigned char *) (&(getAESKey()[0])), received_iv)
+
+	// //put string termination character at the end of the string	
+	// username[username_length] = '\0';	
 
 	ibsssAnnounceMessage(getSessionToken(), username_length, username);
 
@@ -152,10 +163,13 @@ void Client_Handle::operationCreateUser() {
 
 	//read the password 
 	password.resize(password_length);
-	ibsssReadMessage(client_descriptor, &password[0], password_length, read_status);
-		
-	//put string termination character at the end of the string	
-	password[password_length] = '\0';		
+	ibsssReadMessage(client_descriptor, &password_encrypt[0], password_length, read_status);
+
+	//decrypt the password
+	std::string password = encrypt_decrypt(password_encrypt, (unsigned char *) (&(getAESKey()[0])), received_iv)
+	
+	// //put string termination character at the end of the string	
+	// password[password_length] = '\0';		
 
 	ibsssAnnounceMessage(getSessionToken(), password_length, password);
 
@@ -164,10 +178,13 @@ void Client_Handle::operationCreateUser() {
 
 	//read the email 
 	email.resize(email_length);
-	ibsssReadMessage(client_descriptor, &email[0], email_length, read_status);
+	ibsssReadMessage(client_descriptor, &email_encrypt[0], email_length, read_status);
+
+	//decrypt the email
+	std::string email = encrypt_decrypt(email_encrypt, (unsigned char *) (&(getAESKey()[0])), received_iv)
 	
-	//put string termination character at the end of the string	
-	email[email_length] = '\0';		
+	// //put string termination character at the end of the string	
+	// email[email_length] = '\0';		
 
 	ibsssAnnounceMessage(getSessionToken(), email_length, email);
 
@@ -180,7 +197,11 @@ void Client_Handle::operationCreateUser() {
 	//let the client now you were successful or that you failed base on the status
 	if (operation_successful){
 		ibsssWriteMessage(client_descriptor, &IBSSS_OP_SUCCESS, 1, write_status);
-		ibsssWriteMessage(client_descriptor, getSessionToken().c_str(), IBSSS_SESSION_TOKEN_LENGTH, write_status);
+
+		// encrypt session token and send it
+		std::string session_token_encrypt = encrypt_decrypt(getSessionToken(), (unsigned char *) (&(getAESKey()[0])), sent_iv)
+
+		ibsssWriteMessage(client_descriptor, &session_token_encrypt[0], IBSSS_SESSION_TOKEN_LENGTH, write_status);
 	} else {
 		ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
 	}
@@ -218,22 +239,33 @@ void Client_Handle::operationLogin() {
 		return;
 	}
 
-	char username[256];
-	char password[256];
+	std::string username_encrypt;
+	std::string password_encrypt;
 
 	int username_length;
 	int password_length;
 
 	int operation_successful = 0;
 
+	unsigned char received_iv[IBSSS_NONCE_SIZE];
+	unsigned char sent_iv[IBSSS_NONCE_SIZE];
+
+	generate_random_iv(sent_iv);
+
+	//read the IV
+	ibsssReadMessage(client_descriptor, received_iv, IBSSS_NONCE_SIZE, read_status);
+
 	//read the length of the username, if operation fails issue ibsssError	
 	ibsssReadMessage(client_descriptor, &username_length, 4, read_status);
 
 	//read the username 
-	ibsssReadMessage(client_descriptor, username, username_length, read_status);
+	ibsssReadMessage(client_descriptor, &username_encrypt[0], username_length, read_status);
 	
-	//put string termination character at the end of the string	
-	username[username_length] = '\0';		
+	//decrypt the username
+	std::string username = encrypt_decrypt(username_encrypt, (unsigned char *) (&(getAESKey()[0])), received_iv)
+
+	// //put string termination character at the end of the string	
+	// username[username_length] = '\0';		
 
 	ibsssAnnounceMessage(getSessionToken(), username_length, username);
 
@@ -243,8 +275,11 @@ void Client_Handle::operationLogin() {
 	//read the password 
 	ibsssReadMessage(client_descriptor, password, password_length, read_status);
 	
-	//put string termination character at the end of the string	
-	password[password_length] = '\0';		
+	//decrypt the password
+	std::string password = encrypt_decrypt(password_encrypt, (unsigned char *) (&(getAESKey()[0])), received_iv)
+
+	// //put string termination character at the end of the string	
+	// password[password_length] = '\0';		
 
 	ibsssAnnounceMessage(getSessionToken(), password_length, password);
 
@@ -258,7 +293,10 @@ void Client_Handle::operationLogin() {
 	//let the client now you were successful or that you failed base on the status
 	if (operation_successful){
 		ibsssWriteMessage(client_descriptor, &IBSSS_OP_SUCCESS, 1, write_status);
-		ibsssWriteMessage(client_descriptor, &(getSessionToken()[0]), IBSSS_SESSION_TOKEN_LENGTH, write_status);
+		// encrypt session token and send it
+		std::string session_token_encrypt = encrypt_decrypt(getSessionToken(), (unsigned char *) (&(getAESKey()[0])), sent_iv)
+
+		ibsssWriteMessage(client_descriptor, &session_token_encrypt[0], IBSSS_SESSION_TOKEN_LENGTH, write_status);
 	} else {
 		ibsssWriteMessage(client_descriptor, &IBSSS_OP_FAILURE, 1, write_status);
 	}
