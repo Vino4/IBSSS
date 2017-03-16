@@ -15,5 +15,9 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 
 extern std::mutex IBSSS_KILL_SESSION_MUTEX;
 extern std::mutex IBSSS_STREAM_CONNECTION_MUTEX;
+<<<<<<< HEAD
+
+=======
+>>>>>>> 502d4a90449669b08c126411000cc77fc7114fca
 #endif /*_IBSSS_MUTEX*/
 

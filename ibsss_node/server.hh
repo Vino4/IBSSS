@@ -10,10 +10,11 @@ Authors:
 Matt Almenshad | Andrew Gao | Jenny Horn 
 */
 
-#ifndef _MAIN_SERVER_HEADER
-#define _MAIN_SERVER_HEADER
+#ifndef _MAIN_SERVER_NODE_HEADER
+#define _MAIN_SERVER_NODE_HEADER
 
-#include "ibsss_server.hh"
+#include "ibsss_server_node.hh"
+
 #include "ibsss_op_codes.hh"
 #include "ibsss_error.hh"
 #include <stdio.h>
@@ -21,4 +22,4 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 
 #define IBSSS_DEFAULT_PORT 4774
 
-#endif /*_MAIN_SERVER_HEADER*/
+#endif /*_MAIN_SERVER_NODE_HEADER*/

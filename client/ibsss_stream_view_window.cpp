@@ -178,12 +178,12 @@ void IBSSS_Stream_View_Window::on_changeImageButton_clicked()
     });
     timer->start(250);
     */
-
+/*
     while (1){
         ui->Display_1->repaint();
     }
-
-    //ui->Display_1->connection->connectToHost("localhost", 4774);
+*/
+    ui->Display_1->connection->connectToHost("10.111.69.51", 4774);
 }
 
 

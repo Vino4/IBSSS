@@ -1,9 +1,8 @@
-#ifndef _IBSSS_SERVER_HEADER
-#define _IBSSS_SERVER_HEADER
+#ifndef _IBSSS_NODE_SERVER_HEADER
+#define _IBSSS_NODE_SERVER_HEADER
 
-#include "ibsss_database_handler.hh"
-#include "ibsss_client_handler.hh"
-#include "ibsss_server.hh"
+#include "ibsss_stream_handler.hh"
+#include "ibsss_server_node.hh"
 #include "ibsss_op_codes.hh"
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,34 +15,32 @@
 #include <bitset>
 #include <vector>
 #include <thread>
-#include <sqlite3.h> 
-#include <ibsss_database.h> 
 #include <ibsss_session_token.h> 
 #include <signal.h>
 #include <ibsss_mutex.hh>
 #include <algorithm>
 
 #define IBSSS_MAXIMUM_BENDING_CONNECTIONS 40
-extern volatile sig_atomic_t IBSSS_SERVER_IS_ALIVE;
+extern volatile sig_atomic_t IBSSS_NODE_SERVER_IS_ALIVE;
 
-class Server_Handle {
+class Server_Node_Handle {
 	
 	public:
 
 		/*
-		Server_Handle()
+		Server_Node_Handle()
 		
-		Creates a Server_Handle
+		Creates a Server_Node_Handle
 
 		Arguments:
 			none
 		Returns:
 		      none
 		*/
-		Server_Handle();
+		Server_Node_Handle();
 	
 		/*
-		Server_Handle::shutdown()
+		Server_Node_Handle::shutdown()
 
 		Shut the server down.
 		Can be called with Ctrl + C interruption.
@@ -56,7 +53,7 @@ class Server_Handle {
 		void shutdown();
 
 		/*
-		Server_Handle::setDescriptor(int descriptor)
+		Server_Node_Handle::setDescriptor(int descriptor)
 	
 		Sets the server socket descriptor;
 		Will be used later to write to, read from and maanage the main server socket.
@@ -69,7 +66,7 @@ class Server_Handle {
 		void setDescriptor(int descriptor);
 
 		/*
-		Server_Handle::init(int port)
+		Server_Node_Handle::init(int port)
 	
 		Initalizes the server by
 			- Initalizing srand()
@@ -85,18 +82,18 @@ class Server_Handle {
 		void init(int port);
 
 		/*
-		Server_Handle::runConnectionManager(Server_Handle * server_handle)
+		Server_Node_Handle::runConnectionManager(Server_Node_Handle * server_handle)
 
 		Manages server connections by:
 			- Accepting connection to the main server sucket
 			- Starting a new thread to handle every new client session 
 		
 		Arguments:
-			Server_Handle * server_handle, a pointer to a server handle	
+			Server_Node_Handle * server_handle, a pointer to a server handle	
 		Returns:
 		      none
 		*/
-		void runConnectionManager(Server_Handle * server_handle);
+		void runConnectionManager(Server_Node_Handle * server_handle);
 
 
 	private:
@@ -104,8 +101,7 @@ class Server_Handle {
 		int main_socket, main_port;
 		struct sockaddr_in server_address;
 		std::thread * thread_handle;
-		std::vector<Client_Handle*> connections;
-		Database_Handle database_handle;
+		Stream_Handle stream_handle;
 };
 
-#endif /*_IBSSS_SERVER_HEADER*/
+#endif /*_Ibsss_node_server_header*/
