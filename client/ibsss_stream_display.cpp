@@ -37,14 +37,14 @@ void Stream_Display::displayFrameFromBuffer() {
 }
 
 void Stream_Display::paintEvent(QPaintEvent*) {
-    testing_bool = (!testing_bool);
+  /*  testing_bool = (!testing_bool);
     if(testing_bool){
         loadFrameToBuffer("bowlofcereal.jpeg");
         displayFrameFromBuffer();
     } else {
         loadFrameToBuffer("cereal.jpeg");
         displayFrameFromBuffer();
-    }
+    }*/
   if (!frame) { return; }
   QPainter painter(this);
   painter.drawImage(rect(), *frame, frame->rect());
@@ -65,13 +65,43 @@ void Stream_Display::isReadReady(){
 //    unsigned int jenny;
 //    stream.readBytes(fs,jenny);
 
-    Mat matt;
+
     unsigned long long jen;
-    char frame[921600];
+    char frame_[921600];
     stream.readRawData((char*)&jen, sizeof(jen));
-    for (unsigned long long i = 0; i < jen; i++){
-        stream.readRawData(&frame[i], 1);
+    //for (unsigned long long i = 0; i < jen; i++){
+    //    stream.readRawData(&frame[i], 1);
+    //}
+
+    QByteArray array;
+
+    unsigned long long red = stream.readRawData(frame_, jen);
+    std::cout << "Read: " << red << std::endl;
+    //std::cout << "size:: "<< jen << std::endl;
+    while (red < jen){
+        red += stream.readRawData(&frame_[red], jen - red);
+        //std::cout << "Read: " << red << std::endl;
     }
+
+    std::cout << "Total Read: " << red << std::endl;
+
+    Mat LoadedBuf = Mat(480,640, CV_8U, frame_);
+    Mat decodedImage = imdecode(LoadedBuf, CV_LOAD_IMAGE_COLOR);
+
+    cvtColor(decodedImage, decodedImage, CV_BGR2RGB);
+
+    imwrite("picturey.jpg", decodedImage);
+
+
+
+    //if (frame_buffer!=NULL){
+    //    delete frame_buffer;
+    //    frame_buffer = new QImage(decodedImage.data, decodedImage.cols, decodedImage.rows, decodedImage.step, QImage::Format_RGB888);
+    //    connection->close();
+
+    //}
+    //frame = frame_buffer;
+
     //    stream>>framesize;
 
     //while (connection->bytesAvailable()){
