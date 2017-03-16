@@ -123,15 +123,19 @@ int Server_Connection_Handle::operationCreateUser(std::string username, std::str
 
 	switch (operation_status) {
 		case IBSSS_OP_SUCCESS:
-			session_token.resize(IBSSS_SESSION_TOKEN_LENGTH);
+			received_session_token.resize(IBSSS_SESSION_TOKEN_LENGTH);
 
 			// read the IV
 			ibsssReadMessage(server_connection_descriptor, &received_iv[0], IBSSS_NONCE_SIZE, read_status);
 
+			// read the session token
 			ibsssReadMessage(server_connection_descriptor, &received_session_token[0], IBSSS_SESSION_TOKEN_LENGTH, 
 						read_status);
             
+			// decrypt the session token
+			std::string session_token(encrypt_decrypt(received_session_token, (unsigned char *) (&(getAESKey()[0])), received_iv), 0, IBSSS_SESSION_TOKEN_LENGTH);
 			std::cout << "got session token: " << session_token << std::endl;
+			setSessionToken(session_token);
 			establishLoggedinStatus();
 			return 1;
 		case IBSSS_OP_FAILURE:
@@ -186,15 +190,18 @@ int Server_Connection_Handle::operationLogin(std::string username, std::string p
 
 	switch (operation_status) {
 		case IBSSS_OP_SUCCESS:
-			session_token.resize(IBSSS_SESSION_TOKEN_LENGTH);
+			received_session_token.resize(IBSSS_SESSION_TOKEN_LENGTH);
 			
 			// read the IV
 			ibsssReadMessage(server_connection_descriptor, &received_iv[0], IBSSS_NONCE_SIZE, read_status);
 			
 			ibsssReadMessage(server_connection_descriptor, &received_session_token[0], IBSSS_SESSION_TOKEN_LENGTH, 
 						read_status);
-						
+
+			std::string session_token(encrypt_decrypt(received_session_token, (unsigned char *) (&(getAESKey()[0])), received_iv), 0, IBSSS_SESSION_TOKEN_LENGTH);
 			std::cout << "got session token: " << session_token << std::endl;
+			setSessionToken(session_token);
+						
 			establishLoggedinStatus();
 			return 1;
 		case IBSSS_OP_FAILURE:
