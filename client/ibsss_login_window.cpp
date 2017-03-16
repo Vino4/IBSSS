@@ -38,8 +38,9 @@ void IBSSS_Login_Window::on_loginButton_clicked()
         }
         connection->establishConnectedStatus();
     }
+    if (connection->usernameIsValid(ui->username->text().toStdString()) && connection->passwordIsValid(ui->password->text().toStdString())){
 
-    if (connection->usernameIsValid(ui->username->text().toStdString()) && connection->passwordIsValid(ui->password->text().toStdString()) && connection->operationLogin(username.toStdString(), password.toStdString())){
+//    if (connection->usernameIsValid(ui->username->text().toStdString()) && connection->passwordIsValid(ui->password->text().toStdString()) && connection->operationLogin(username.toStdString(), password.toStdString())){
         //QMessageBox::information(this, "Login", "YAY");
 
         QPixmap file("cereal.jpeg"); //

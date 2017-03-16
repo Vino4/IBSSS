@@ -14,7 +14,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #define IBSSS_TRACE_TERMINATION 1 
 #define IBSSS_TRACE_OPERATIONS 1 
 #define IBSSS_TRACE_SESSIONS 1
-#define IBSSS_TRACE_READ_WRITE_STATUS 0 
+#define IBSSS_TRACE_READ_WRITE_STATUS 1 
 #define IBSSS_TRACE_READ_WRITE_MESSAGES 1 
 
 #include <iostream>

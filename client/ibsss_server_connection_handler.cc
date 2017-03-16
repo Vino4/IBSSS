@@ -49,6 +49,22 @@ Server_Connection_Handle::Server_Connection_Handle(){
             connected_status = 0;
 }
 
+
+/*
+getAESKey(std::string key)
+
+returns the symetric encryption key
+
+Arguments:
+    none
+Returns:
+    - std::string key, the symetric AES key
+*/
+std::string Server_Connection_Handle::getAESKey(){
+    return AES_key;
+
+}
+
 /*
 killSession()
 	- Closes TCP connection

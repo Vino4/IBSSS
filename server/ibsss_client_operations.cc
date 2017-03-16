@@ -7,6 +7,7 @@ Authors:
 Matt Almenshad | Andrew Gao | Jenny Horn 
 */
 
+#include "ibsss_crypto.hh"
 #include "ibsss_database_handler.hh"
 #include "ibsss_restrictions.h"
 #include "ibsss_client_handler.hh"
@@ -63,20 +64,21 @@ void Client_Handle::operationHello(){
 	//read the key	
 	ibsssReadMessage(client_descriptor, received_AES_key, length, read_status);
 	
-	//decrypt the aes key
-	unsigned char AES_key_decrypt[length];
-	std::string received_AES_key_str = std::string(received_AES_key, received_AES_key+4);
-	AES_key_decrypt_str = RSA_decrypt(received_AES_key_str);
-	memcpy(AES_key_decrypt, AES_key_decrypt_str, length);
+	//std::cout << "\n\n\n KeyDecryptedNOT: " << received_AES_key << std::endl;
 	
+	//decrypt the aes key
+	std::string received_AES_key_str = std::string(received_AES_key, received_AES_key+length);
+	std::string AES_key_decrypt_str = RSA_decrypt(received_AES_key_str);
+
+	//std::cout << "\n\n\n KeyDecrypted: " << AES_key_decrypt_str << std::endl;
 
 	//print what you received in the following format:
 	//[session token][length of message (key in this case)]: message (key in this case)
 	//format this however you want just make sure it's clear to help us debug	
-	ibsssAnnounceMessage(getSessionToken(), length, AES_key_decrypt);
+//	ibsssAnnounceMessage(getSessionToken(), length, AES_key_decrypt);
 
 	//set the client in the client's storage	
-	setAESKey(std::string(AES_key_decrypt, AES_key_decrypt+length));
+	setAESKey(AES_key_decrypt_str);
 
 	establishSecuredStatus();
 	
