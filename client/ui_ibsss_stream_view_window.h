@@ -59,15 +59,23 @@ public:
     QWidget *page_2;
     QPushButton *back1;
     QLabel *ManageStreams_label;
-    QListWidget *userList;
-    QPushButton *mu_promote_button;
-    QPushButton *mu_demote_button;
-    QPushButton *mu_deleteuser_button;
-    QPushButton *lmu_pwreset_button;
-    QPushButton *mu_email_button;
+    QListWidget *streamsList;
+    QPushButton *ms_on_button;
+    QPushButton *ms_off_button;
+    QPushButton *ms_remove_button;
+    QPushButton *ms_mngUsers_button;
+    QWidget *page_6;
+    QLabel *label_2;
+    QPushButton *mup_toMS_button;
     QWidget *page_4;
     QLabel *ManageUsers_label;
     QPushButton *back2;
+    QPushButton *mu_promote_button;
+    QListWidget *userList;
+    QPushButton *mu_demote_button;
+    QPushButton *lmu_pwreset_button;
+    QPushButton *mu_email_button;
+    QPushButton *mu_deleteuser_button;
     QWidget *page_3;
     QPushButton *back3;
     QWidget *verticalLayoutWidget;
@@ -170,33 +178,43 @@ public:
         ManageStreams_label->setObjectName(QStringLiteral("ManageStreams_label"));
         ManageStreams_label->setGeometry(QRect(260, 10, 211, 41));
         ManageStreams_label->setFont(font);
-        userList = new QListWidget(page_2);
-        userList->setObjectName(QStringLiteral("userList"));
-        userList->setGeometry(QRect(150, 70, 421, 341));
-        userList->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        userList->setAlternatingRowColors(true);
-        userList->setSortingEnabled(true);
-        mu_promote_button = new QPushButton(page_2);
-        mu_promote_button->setObjectName(QStringLiteral("mu_promote_button"));
-        mu_promote_button->setEnabled(false);
-        mu_promote_button->setGeometry(QRect(240, 420, 31, 29));
-        mu_demote_button = new QPushButton(page_2);
-        mu_demote_button->setObjectName(QStringLiteral("mu_demote_button"));
-        mu_demote_button->setEnabled(false);
-        mu_demote_button->setGeometry(QRect(280, 420, 31, 29));
-        mu_deleteuser_button = new QPushButton(page_2);
-        mu_deleteuser_button->setObjectName(QStringLiteral("mu_deleteuser_button"));
-        mu_deleteuser_button->setEnabled(false);
-        mu_deleteuser_button->setGeometry(QRect(400, 420, 31, 29));
-        lmu_pwreset_button = new QPushButton(page_2);
-        lmu_pwreset_button->setObjectName(QStringLiteral("lmu_pwreset_button"));
-        lmu_pwreset_button->setEnabled(false);
-        lmu_pwreset_button->setGeometry(QRect(320, 420, 31, 29));
-        mu_email_button = new QPushButton(page_2);
-        mu_email_button->setObjectName(QStringLiteral("mu_email_button"));
-        mu_email_button->setEnabled(false);
-        mu_email_button->setGeometry(QRect(360, 420, 31, 29));
+        streamsList = new QListWidget(page_2);
+        streamsList->setObjectName(QStringLiteral("streamsList"));
+        streamsList->setGeometry(QRect(180, 60, 371, 301));
+        ms_on_button = new QPushButton(page_2);
+        ms_on_button->setObjectName(QStringLiteral("ms_on_button"));
+        ms_on_button->setEnabled(false);
+        ms_on_button->setGeometry(QRect(300, 380, 41, 29));
+        ms_off_button = new QPushButton(page_2);
+        ms_off_button->setObjectName(QStringLiteral("ms_off_button"));
+        ms_off_button->setEnabled(false);
+        ms_off_button->setGeometry(QRect(380, 380, 41, 29));
+        ms_remove_button = new QPushButton(page_2);
+        ms_remove_button->setObjectName(QStringLiteral("ms_remove_button"));
+        ms_remove_button->setEnabled(false);
+        ms_remove_button->setGeometry(QRect(460, 380, 31, 29));
+        ms_mngUsers_button = new QPushButton(page_2);
+        ms_mngUsers_button->setObjectName(QStringLiteral("ms_mngUsers_button"));
+        ms_mngUsers_button->setEnabled(false);
+        ms_mngUsers_button->setGeometry(QRect(560, 60, 51, 31));
         stackedWidget->addWidget(page_2);
+        page_6 = new QWidget();
+        page_6->setObjectName(QStringLiteral("page_6"));
+        label_2 = new QLabel(page_6);
+        label_2->setObjectName(QStringLiteral("label_2"));
+        label_2->setGeometry(QRect(210, 10, 321, 41));
+        label_2->setFont(font);
+        mup_toMS_button = new QPushButton(page_6);
+        mup_toMS_button->setObjectName(QStringLiteral("mup_toMS_button"));
+        mup_toMS_button->setEnabled(true);
+        mup_toMS_button->setGeometry(QRect(50, 60, 41, 41));
+        QFont font1;
+        font1.setFamily(QStringLiteral("DejaVu Sans"));
+        font1.setPointSize(15);
+        font1.setBold(true);
+        font1.setWeight(75);
+        mup_toMS_button->setFont(font1);
+        stackedWidget->addWidget(page_6);
         page_4 = new QWidget();
         page_4->setObjectName(QStringLiteral("page_4"));
         ManageUsers_label = new QLabel(page_4);
@@ -206,6 +224,32 @@ public:
         back2 = new QPushButton(page_4);
         back2->setObjectName(QStringLiteral("back2"));
         back2->setGeometry(QRect(10, 470, 71, 29));
+        mu_promote_button = new QPushButton(page_4);
+        mu_promote_button->setObjectName(QStringLiteral("mu_promote_button"));
+        mu_promote_button->setEnabled(false);
+        mu_promote_button->setGeometry(QRect(240, 430, 31, 29));
+        userList = new QListWidget(page_4);
+        userList->setObjectName(QStringLiteral("userList"));
+        userList->setGeometry(QRect(150, 60, 421, 341));
+        userList->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        userList->setAlternatingRowColors(true);
+        userList->setSortingEnabled(true);
+        mu_demote_button = new QPushButton(page_4);
+        mu_demote_button->setObjectName(QStringLiteral("mu_demote_button"));
+        mu_demote_button->setEnabled(false);
+        mu_demote_button->setGeometry(QRect(290, 430, 31, 29));
+        lmu_pwreset_button = new QPushButton(page_4);
+        lmu_pwreset_button->setObjectName(QStringLiteral("lmu_pwreset_button"));
+        lmu_pwreset_button->setEnabled(false);
+        lmu_pwreset_button->setGeometry(QRect(340, 430, 31, 29));
+        mu_email_button = new QPushButton(page_4);
+        mu_email_button->setObjectName(QStringLiteral("mu_email_button"));
+        mu_email_button->setEnabled(false);
+        mu_email_button->setGeometry(QRect(390, 430, 31, 29));
+        mu_deleteuser_button = new QPushButton(page_4);
+        mu_deleteuser_button->setObjectName(QStringLiteral("mu_deleteuser_button"));
+        mu_deleteuser_button->setEnabled(false);
+        mu_deleteuser_button->setGeometry(QRect(440, 430, 31, 29));
         stackedWidget->addWidget(page_4);
         page_3 = new QWidget();
         page_3->setObjectName(QStringLiteral("page_3"));
@@ -307,7 +351,7 @@ public:
 
         retranslateUi(IBSSS_Stream_View_Window_Layout);
 
-        stackedWidget->setCurrentIndex(2);
+        stackedWidget->setCurrentIndex(0);
 
 
         QMetaObject::connectSlotsByName(IBSSS_Stream_View_Window_Layout);
@@ -331,6 +375,29 @@ public:
         back1->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "Back", 0));
         ManageStreams_label->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "Manage Streams", 0));
 #ifndef QT_NO_TOOLTIP
+        ms_on_button->setToolTip(QApplication::translate("IBSSS_Stream_View_Window_Layout", "<html><head/><body><p>Turn on stream</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        ms_on_button->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "On", 0));
+#ifndef QT_NO_TOOLTIP
+        ms_off_button->setToolTip(QApplication::translate("IBSSS_Stream_View_Window_Layout", "<html><head/><body><p>Turn off stream</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        ms_off_button->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "Off", 0));
+#ifndef QT_NO_TOOLTIP
+        ms_remove_button->setToolTip(QApplication::translate("IBSSS_Stream_View_Window_Layout", "<html><head/><body><p>Remove stream</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        ms_remove_button->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "X", 0));
+#ifndef QT_NO_TOOLTIP
+        ms_mngUsers_button->setToolTip(QApplication::translate("IBSSS_Stream_View_Window_Layout", "<html><head/><body><p>Manage user permissions...</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        ms_mngUsers_button->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "... >", 0));
+        label_2->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "Manage User Permissions", 0));
+#ifndef QT_NO_TOOLTIP
+        mup_toMS_button->setToolTip(QApplication::translate("IBSSS_Stream_View_Window_Layout", "<html><head/><body><p><span style=\" font-weight:400;\">Back to Manage Streams</span></p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        mup_toMS_button->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "<", 0));
+        ManageUsers_label->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "Manage Users", 0));
+        back2->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "Back", 0));
+#ifndef QT_NO_TOOLTIP
         mu_promote_button->setToolTip(QApplication::translate("IBSSS_Stream_View_Window_Layout", "<html><head/><body><p>promote</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         mu_promote_button->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "^", 0));
@@ -339,10 +406,6 @@ public:
 #endif // QT_NO_TOOLTIP
         mu_demote_button->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "v", 0));
 #ifndef QT_NO_TOOLTIP
-        mu_deleteuser_button->setToolTip(QApplication::translate("IBSSS_Stream_View_Window_Layout", "<html><head/><body><p>delete user</p></body></html>", 0));
-#endif // QT_NO_TOOLTIP
-        mu_deleteuser_button->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "X", 0));
-#ifndef QT_NO_TOOLTIP
         lmu_pwreset_button->setToolTip(QApplication::translate("IBSSS_Stream_View_Window_Layout", "<html><head/><body><p>reset password</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         lmu_pwreset_button->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "#", 0));
@@ -350,8 +413,10 @@ public:
         mu_email_button->setToolTip(QApplication::translate("IBSSS_Stream_View_Window_Layout", "<html><head/><body><p>change email</p></body></html>", 0));
 #endif // QT_NO_TOOLTIP
         mu_email_button->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "@", 0));
-        ManageUsers_label->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "Manage Users", 0));
-        back2->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "Back", 0));
+#ifndef QT_NO_TOOLTIP
+        mu_deleteuser_button->setToolTip(QApplication::translate("IBSSS_Stream_View_Window_Layout", "<html><head/><body><p>delete user</p></body></html>", 0));
+#endif // QT_NO_TOOLTIP
+        mu_deleteuser_button->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "X", 0));
         back3->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "Back", 0));
         oldPW_label->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "Old password:", 0));
         newPW_label->setText(QApplication::translate("IBSSS_Stream_View_Window_Layout", "New password:", 0));

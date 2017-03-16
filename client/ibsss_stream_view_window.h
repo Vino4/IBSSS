@@ -40,7 +40,11 @@ private slots:
     void on_changeImageButton_clicked();
     void on_changePasswordButton_clicked();
     void enableOptions();
-    void toggle_MS_MUS(int page);
+    void enableStreamOptions();
+
+    void on_ms_mngUsers_button_clicked();
+
+    void on_mup_toMS_button_clicked();
 
 private:
     Ui::IBSSS_Stream_View_Window_Layout *ui;

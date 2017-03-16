@@ -39,8 +39,8 @@ IBSSS_Stream_View_Window::IBSSS_Stream_View_Window(QApplication *parent, Server_
 
     ui->actionAdd_Stream->setData(1);
     ui->actionManage_Streams->setData(2);
-    ui->actionManage_Users->setData(3);
-    ui->actionChange_Password->setData(4);
+    ui->actionManage_Users->setData(4);
+    ui->actionChange_Password->setData(5);
 
 
 
@@ -72,6 +72,9 @@ IBSSS_Stream_View_Window::IBSSS_Stream_View_Window(QApplication *parent, Server_
 
         //fill list with users
         ui->userList->insertItem(i, userlist[i]);
+
+        //fill permissions list with users
+        ui->permissions_userList->insertItem(i, userlist[i]);
     }
     connect(ui->userList, SIGNAL(itemSelectionChanged()), this, SLOT(enableOptions()));
 
@@ -85,10 +88,11 @@ IBSSS_Stream_View_Window::IBSSS_Stream_View_Window(QApplication *parent, Server_
 
     ui->streamsList->insertItem(0, "stream 1");
     ui->streamsList->insertItem(1, "stream 2");
+    ui->streamsList->insertItem(2, "stream 3");
 
-    connect(ui->ms_mngUsers_button, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(toggle_MS_MUS(2));
-    connect(ui->ms_mngUsers_button, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(toggle_MS_MUS(3));
+    connect(ui->streamsList, SIGNAL(itemSelectionChanged()), this, SLOT(enableStreamOptions()));
 
+    //connect(ui->ms_mngUsers_button, SIGNAL(clicked(bool)), this, SLOT(toggle_MS_MUS(int)));
 }
 
 IBSSS_Stream_View_Window::~IBSSS_Stream_View_Window()
@@ -241,7 +245,30 @@ void IBSSS_Stream_View_Window::enableOptions()
 
 }
 
-void IBSSS_Stream_View_Window::toggle_MS_MUS(int page)
+void IBSSS_Stream_View_Window::enableStreamOptions()
 {
-    ui->stackedWidget->setCurrentIndex(page);
+    if(ui->streamsList->currentItem()->isSelected()){
+        ui->ms_mngUsers_button->setEnabled(true);
+        ui->ms_off_button->setEnabled(true);
+        ui->ms_on_button->setEnabled(true);
+        ui->ms_remove_button->setEnabled(true);
+    }
+    else
+    {
+        ui->ms_mngUsers_button->setEnabled(false);
+        ui->ms_off_button->setEnabled(false);
+        ui->ms_on_button->setEnabled(false);
+        ui->ms_remove_button->setEnabled(false);
+    }
+
+}
+
+void IBSSS_Stream_View_Window::on_ms_mngUsers_button_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(3);
+}
+
+void IBSSS_Stream_View_Window::on_mup_toMS_button_clicked()
+{
+    ui->stackedWidget->setCurrentIndex(2);
 }
