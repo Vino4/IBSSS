@@ -18,7 +18,7 @@ INCLUDEPATH += /usr/include/cryptopp
 INCLUDEPATH += $$PWD/../specifications
 INCLUDEPATH += $$PWD/../crypto
 
-LIBS += -L/usr/lib/cryptopp -lcryptopp
+LIBS += -L/usr/lib/cryptopp -lcryptopp -lopencv_highgui -lopencv_core -lopencv_imgproc -lopencv_objdetect
 
 SOURCES += *.cpp \
     *.cc \

@@ -34,9 +34,9 @@ int Server_Connection_Handle::operationHello(){
 	char operation_status;
 
 	//TODO: generate AES key and send it
-    //generate_random_key(AES_key);
-    for (int i = 0; i < 32; i++)
-        AES_key[i] = '4';
+    generate_random_key(AES_key);
+    //for (int i = 0; i < 32; i++)
+    //    AES_key[i] = '4';
 
     std::string AES_key_str = std::string(AES_key, AES_key+IBSSS_KEY_SIZE);
 	// Remeber the AES key
@@ -350,13 +350,47 @@ int Server_Connection_Handle::operationChangePassword(std::string username, std:
 	if (!secured_status)
 		return 0;
 
-	int read_status, write_status;
-	
-	int username_length = username.length();
-	int old_password_length = old_password.length();
-	int new_password_length = new_password.length();
+    //========================================================================================
+    //========================================================================================
+    //========================================================================================
+    // THIS IS WHERE JENNY STARTED CHANGING THINGS
+    //========================================================================================
+    //========================================================================================
+    //========================================================================================
 
-	char operation_status;
+
+
+
+    //int username_length = username.length();
+    //int old_password_length = old_password.length();
+    //int new_password_length = new_password.length();
+
+    int read_status, write_status;
+    char operation_status;
+
+    unsigned char iv[IBSSS_NONCE_SIZE];	//?
+    generate_random_iv(iv);
+
+    unsigned char receivedIV[IBSSS_NONCE_SIZE]; //?
+    std::string received_session_token;
+
+    std::string username_encrypt = encrypt_decrypt(username, (unsigned char *) (&(getAESKey()[0])), iv);
+    std::string old_password_encrypt = encrypt_decrypt(old_password, (unsigned char *) (&(getAESKey()[0])), iv);
+    std::string new_password_encrypt = encrypt_decrypt(new_password, (unsigned char *) (&(getAESKey()[0])), iv);
+
+    int username_length = username_encrypt.length();
+    int old_password_length = old_password_encrypt.length();
+    int new_password_length = new_password_encrypt.length();
+
+
+    //========================================================================================
+    //========================================================================================
+    //========================================================================================
+    // THIS IS WHERE JENNY STOPPED CHANGING THINGS
+    //========================================================================================
+    //========================================================================================
+    //========================================================================================
+
 
 	// Send Op Code to Server
 	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_CHANGE_PASSWORD, 1, write_status);

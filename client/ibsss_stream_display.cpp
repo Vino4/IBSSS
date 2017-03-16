@@ -8,6 +8,11 @@
 #include <QMessageBox>
 #include <QDir>
 #include <QTcpSocket>
+#include <QDataStream>
+#include <iostream>
+#include <opencv2/opencv.hpp>
+
+using namespace cv;
 
 bool testing_bool = true;
 
@@ -51,13 +56,23 @@ void Stream_Display::gotcha(){
 }
 
 void Stream_Display::isReadReady(){
-    QMessageBox::information(this, "WEED WEDDY",
-                               QString("YAK FEEE"));
     //QByteArray bytearray = new QByteArray;
+    QDataStream stream(connection);
 
-    int framesize = connection->read(4).toInt();
+    //qint16
+    //int
+//    char* fs;
+//    unsigned int jenny;
+//    stream.readBytes(fs,jenny);
 
-
+    Mat matt;
+    unsigned long long jen;
+    char frame[921600];
+    stream.readRawData((char*)&jen, sizeof(jen));
+    for (unsigned long long i = 0; i < jen; i++){
+        stream.readRawData(&frame[i], 1);
+    }
+    //    stream>>framesize;
 
     //while (connection->bytesAvailable()){
         //buffer.append(connection->readAll());
@@ -73,14 +88,22 @@ void Stream_Display::isReadReady(){
     //}
     //QString stringy = bytearray.toStdString();
 
-    QMessageBox::information(this, "read data size?", QString::number(framesize));
+    //std::cout<<fs<<std::endl;
+
+    std::cout<<"size:   "<<std::endl<<jen<<std::endl;
+    //std::cout<<"data:   "<<std::endl<<frame<<std::endl;
+
+//    QMessageBox::information(this, "read data size?", QString::number(framesize));
 }
 
 bool Stream_Display::loadFrameToBuffer(const QString &fileName){
 	QImageReader reader(fileName);
     reader.setAutoTransform(true);
     reader.read(frame_buffer);
-    if (frame_buffer->isNull()) {
+    if (frame_buffer->isNull())
+
+
+    {
 		QMessageBox::information(this, "Ooops", 
 		QString("Unable to load %1: %2")
 		.arg(QDir::toNativeSeparators(fileName), reader.errorString()));
