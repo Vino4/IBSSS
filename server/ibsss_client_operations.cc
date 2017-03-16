@@ -52,7 +52,7 @@ Returns:
 */
 void Client_Handle::operationHello(){
 	
-	unsigned char AES_key[4096];
+	unsigned char received_AES_key[IBSSS_KEY_SIZE];
 	unsigned int length = 0;
 	int operation_successful = 0;
 	int read_status, write_status;
@@ -61,18 +61,22 @@ void Client_Handle::operationHello(){
 	ibsssReadMessage(client_descriptor, &length, 4, read_status);
 
 	//read the key	
-	ibsssReadMessage(client_descriptor, AES_key, length, read_status);
+	ibsssReadMessage(client_descriptor, received_AES_key, length, read_status);
 	
-	//put string termination character at the end of the string	
-	AES_key[length] = '\0';		
+	//decrypt the aes key
+	unsigned char AES_key_decrypt[length];
+	std::string received_AES_key_str = std::string(received_AES_key, received_AES_key+4);
+	AES_key_decrypt_str = RSA_decrypt(received_AES_key_str);
+	memcpy(AES_key_decrypt, AES_key_decrypt_str, length);
+	
 
 	//print what you received in the following format:
 	//[session token][length of message (key in this case)]: message (key in this case)
 	//format this however you want just make sure it's clear to help us debug	
-	ibsssAnnounceMessage(getSessionToken(), length, AES_key);
+	ibsssAnnounceMessage(getSessionToken(), length, AES_key_decrypt);
 
 	//set the client in the client's storage	
-	setAESKey(std::string(AES_key, AES_key+length));
+	setAESKey(std::string(AES_key_decrypt, AES_key_decrypt+length));
 
 	establishSecuredStatus();
 	
