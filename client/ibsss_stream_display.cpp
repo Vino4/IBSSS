@@ -19,6 +19,7 @@ Stream_Display::Stream_Display(QWidget *parent) : QWidget(parent) {
   connection = new QTcpSocket();
 
   connect(connection, SIGNAL(connected()), this, SLOT(gotcha()));
+  connect(connection, SIGNAL(readyRead()), this, SLOT(isReadReady()));
 
   frame_buffer = new QImage();
   frame = 0;
@@ -49,6 +50,32 @@ void Stream_Display::gotcha(){
     QString("FAK YEEE"));
 }
 
+void Stream_Display::isReadReady(){
+    QMessageBox::information(this, "WEED WEDDY",
+                               QString("YAK FEEE"));
+    //QByteArray bytearray = new QByteArray;
+
+    int framesize = connection->read(4).toInt();
+
+
+
+    //while (connection->bytesAvailable()){
+        //buffer.append(connection->readAll());
+        //int numBytes = getPacketSize(buffer);
+        //while(packetSize>0)
+        //{
+        //    handlePacket(buffer.left(sizeOfPacket));
+        //    buffer.remove(0,packetSize);
+        //    sizeOfPacket = getPacketSize(buffer);
+        //}
+
+      //  bytearray = connection->readAll();
+    //}
+    //QString stringy = bytearray.toStdString();
+
+    QMessageBox::information(this, "read data size?", QString::number(framesize));
+}
+
 bool Stream_Display::loadFrameToBuffer(const QString &fileName){
 	QImageReader reader(fileName);
     reader.setAutoTransform(true);
@@ -61,3 +88,5 @@ bool Stream_Display::loadFrameToBuffer(const QString &fileName){
 	}
     return true;
 }
+
+

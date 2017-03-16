@@ -1,4 +1,4 @@
-/* 
+/*
 IBSSS Client Handler 
 
 This file defines the ibsss client handler class and functionlity

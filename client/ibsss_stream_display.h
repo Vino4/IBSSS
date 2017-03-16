@@ -25,6 +25,7 @@ class Stream_Display : public QWidget {
         QTcpSocket * connection;
     public slots:
         void gotcha();
+        void isReadReady();
 
     private:
         QImage* frame;
