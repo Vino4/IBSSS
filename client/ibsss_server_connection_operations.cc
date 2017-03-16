@@ -81,7 +81,7 @@ int Server_Connection_Handle::operationCreateUser(std::string username, std::str
 	unsigned char iv[IBSSS_NONCE_SIZE];	
 	generate_random_iv(iv);
 
-	unsigned char receivedIV[IBSSS_NONCE_SIZE];
+	unsigned char received_iv[IBSSS_NONCE_SIZE];
 	std::string received_session_token;
 
     std::string username_encrypt = encrypt_decrypt(username, (unsigned char *) (&(getAESKey()[0])), iv);
@@ -126,11 +126,11 @@ int Server_Connection_Handle::operationCreateUser(std::string username, std::str
 			session_token.resize(IBSSS_SESSION_TOKEN_LENGTH);
 
 			// read the IV
-			ibsssReadMessage(server_connection_descriptor, &receivedIV[0], IBSSS_NONCE_SIZE, read_status)
+			ibsssReadMessage(server_connection_descriptor, &received_iv[0], IBSSS_NONCE_SIZE, read_status);
 
 			ibsssReadMessage(server_connection_descriptor, &received_session_token[0], IBSSS_SESSION_TOKEN_LENGTH, 
 						read_status);
-            session_token = encrypt_decrypt(username, (unsigned char *) (&(getAESKey()[0])), receivedIV);
+            
 			std::cout << "got session token: " << session_token << std::endl;
 			establishLoggedinStatus();
 			return 1;
@@ -154,7 +154,7 @@ int Server_Connection_Handle::operationLogin(std::string username, std::string p
 	unsigned char iv[IBSSS_NONCE_SIZE];	
 	generate_random_iv(iv);
 
-    unsigned char receivedIV[IBSSS_NONCE_SIZE];
+    unsigned char received_iv[IBSSS_NONCE_SIZE];
     std::string received_session_token;
 
     std::string username_encrypt = encrypt_decrypt(username, (unsigned char *) (&(getAESKey()[0])), iv);
@@ -189,7 +189,7 @@ int Server_Connection_Handle::operationLogin(std::string username, std::string p
 			session_token.resize(IBSSS_SESSION_TOKEN_LENGTH);
 			
 			// read the IV
-			ibsssReadMessage(server_connection_descriptor, &receivedIV[0], IBSSS_NONCE_SIZE, read_status)
+			ibsssReadMessage(server_connection_descriptor, &received_iv[0], IBSSS_NONCE_SIZE, read_status);
 			
 			ibsssReadMessage(server_connection_descriptor, &received_session_token[0], IBSSS_SESSION_TOKEN_LENGTH, 
 						read_status);
@@ -236,6 +236,7 @@ int Server_Connection_Handle::operationLogout() {
 	unsigned char iv[IBSSS_NONCE_SIZE];	
 	generate_random_iv(iv);
 
+	// encrypt the session token
     std::string session_token_encrypt = encrypt_decrypt(getSessionToken(), (unsigned char *) (&(getAESKey()[0])), iv);
 	
 	// Send Op Code to server
@@ -244,7 +245,7 @@ int Server_Connection_Handle::operationLogout() {
 	// Send IV to server
 	ibsssWriteMessage(server_connection_descriptor, iv, IBSSS_NONCE_SIZE, write_status);
 
-	// Send Session token to server
+	// Send encrypted Session token to server
 	ibsssWriteMessage(server_connection_descriptor, &session_token_encrypt[0], IBSSS_SESSION_TOKEN_LENGTH, 
 				write_status);
 
@@ -360,7 +361,6 @@ int Server_Connection_Handle::operationChangePassword(std::string username, std:
 
 
 
-
     //int username_length = username.length();
     //int old_password_length = old_password.length();
     //int new_password_length = new_password.length();
@@ -368,15 +368,14 @@ int Server_Connection_Handle::operationChangePassword(std::string username, std:
     int read_status, write_status;
     char operation_status;
 
-    unsigned char iv[IBSSS_NONCE_SIZE];	//?
-    generate_random_iv(iv);
+    unsigned char sent_iv[IBSSS_NONCE_SIZE];	
+    generate_random_iv(sent_iv);
 
-    unsigned char receivedIV[IBSSS_NONCE_SIZE]; //?
-    std::string received_session_token;
+    std::string session_token_encrypt;
 
-    std::string username_encrypt = encrypt_decrypt(username, (unsigned char *) (&(getAESKey()[0])), iv);
-    std::string old_password_encrypt = encrypt_decrypt(old_password, (unsigned char *) (&(getAESKey()[0])), iv);
-    std::string new_password_encrypt = encrypt_decrypt(new_password, (unsigned char *) (&(getAESKey()[0])), iv);
+	std::string username_encrypt = encrypt_decrypt(username, (unsigned char *) (&(getAESKey()[0])), sent_iv);
+	std::string old_password_encrypt = encrypt_decrypt(old_password, (unsigned char *) (&(getAESKey()[0])), sent_iv);
+	std::string new_password_encrypt = encrypt_decrypt(new_password, (unsigned char *) (&(getAESKey()[0])), sent_iv);
 
     int username_length = username_encrypt.length();
     int old_password_length = old_password_encrypt.length();
@@ -395,20 +394,23 @@ int Server_Connection_Handle::operationChangePassword(std::string username, std:
 	// Send Op Code to Server
 	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_CHANGE_PASSWORD, 1, write_status);
 
+	// Send iv to the server
+	ibsssWriteMessage(server_connection_descriptor, sent_iv, IBSSS_NONCE_SIZE, write_status);
+
 	// send username length
 	ibsssWriteMessage(server_connection_descriptor, &username_length, sizeof(username_length), write_status);
 	// send username
-	ibsssWriteMessage(server_connection_descriptor, &username[0], username_length, write_status);
+	ibsssWriteMessage(server_connection_descriptor, &username_encrypt[0], username_length, write_status);
 	
 	// send old password length
 	ibsssWriteMessage(server_connection_descriptor, &old_password_length, sizeof(old_password_length), write_status);
 	// send old password 
-	ibsssWriteMessage(server_connection_descriptor, &old_password[0], old_password_length, write_status);
+	ibsssWriteMessage(server_connection_descriptor, &old_password_encrypt[0], old_password_length, write_status);
 	
 	// send new password length
 	ibsssWriteMessage(server_connection_descriptor, &new_password_length, sizeof(new_password_length), write_status);
 	// send new_password
-	ibsssWriteMessage(server_connection_descriptor, &new_password[0], new_password_length, write_status);
+	ibsssWriteMessage(server_connection_descriptor, &new_password_encrypt[0], new_password_length, write_status);
 
 	// read what server returns
 	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
@@ -453,25 +455,35 @@ int Server_Connection_Handle::operationForgotPassword(std::string username, std:
 
 	int read_status, write_status;
 
-	int username_length = username.length();
-	int email_length = email.length();
+	unsigned char sent_iv[IBSSS_NONCE_SIZE];	
+    generate_random_iv(sent_iv);
+
+	//encrypt the username and email
+	std::string username_encrypt = encrypt_decrypt(username, (unsigned char *) (&(getAESKey()[0])), sent_iv);
+	std::string email_encrypt = encrypt_decrypt(email, (unsigned char *) (&(getAESKey()[0])), sent_iv);
+
+	int username_length = username_encrypt.length();
+	int email_length = email_encrypt.length();
 
 	char operation_status;
 
 	//send op code to server
 	ibsssWriteMessage(server_connection_descriptor,&IBSSS_OP_FORGOT_PASSWORD, 1, write_status);
 
+	//send IV to server
+	ibsssWriteMessage(server_connection_descriptor, sent_iv, IBSSS_NONCE_SIZE, write_status);
+
 	//send username length
 	ibsssWriteMessage(server_connection_descriptor, &username_length, sizeof(username_length), write_status);
 
 	//send username
-	ibsssWriteMessage(server_connection_descriptor, &username[0], username_length, write_status);
+	ibsssWriteMessage(server_connection_descriptor, &username_encrypt[0], username_length, write_status);
 
 	//send email length
 	ibsssWriteMessage(server_connection_descriptor, &email_length, sizeof(email_length), write_status);
 
 	//send email
-	ibsssWriteMessage(server_connection_descriptor, &email[0], email_length, write_status);
+	ibsssWriteMessage(server_connection_descriptor, &email_encrypt[0], email_length, write_status);
 
 	//read what server returns
 	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
@@ -515,18 +527,27 @@ int Server_Connection_Handle::operationForgotUsername(std::string email){
 
 	int read_status, write_status;
 
-	int email_length = email.length();
+	unsigned char sent_iv[IBSSS_NONCE_SIZE];	
+    generate_random_iv(sent_iv);
+
+	// encrypt the email
+	std::string email_encrypt = encrypt_decrypt(email, (unsigned char *) (&(getAESKey()[0])), sent_iv);
+
+	int email_length = email_encrypt.length();
 
 	char operation_status;
 
 	//send op code to server
 	ibsssWriteMessage(server_connection_descriptor,&IBSSS_OP_FORGOT_USERNAME, 1, write_status);
 
+	//send IV to server
+	ibsssWriteMessage(server_connection_descriptor, sent_iv, IBSSS_NONCE_SIZE, write_status);
+
 	//send email length
 	ibsssWriteMessage(server_connection_descriptor, &email_length, sizeof(email_length), write_status);
 
 	//send email
-	ibsssWriteMessage(server_connection_descriptor, &email[0], email_length, write_status);
+	ibsssWriteMessage(server_connection_descriptor, &email_encrypt[0], email_length, write_status);
 
 	//read what server returns
 	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
