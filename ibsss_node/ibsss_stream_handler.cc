@@ -36,7 +36,7 @@ Returns:
 	none
 */
 Stream_Handle::Stream_Handle(){}
-		
+
 /*
 killSession()
 **Thread Safe**
@@ -48,31 +48,28 @@ Arguments:
 Returns:
 	none
 */
-void Stream_Handle::killSession(int){
+void Stream_Handle::killSession(){
       IBSSS_STREAM_CONNECTION_MUTEX.lock();
 
       if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_SESSIONS)
             std::cout
-            << "\n\n{[=-....Terminating Session....-=]}\n         Target: [" << getSessionToken() << "]"
+            << "\n\n{[=-....Terminating Stream....-=]}\n" 
             << std::endl;
 	
 	streaming = 0; 
- 
+	
 	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_SESSIONS)
-            std::cout << "Closed Stream Processor<< std::endl;
+            std::cout << "Closed Stream Processor" << std::endl;
 
-	for (int i = 0; i < connection->size(); i++ )
-      	close(connections[i]);
- 
-     if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_SESSIONS)
-            std::cout << "Closed Connections << std::endl;
+	for (unsigned int i = 0; i < connections->size(); i++ )
+      	close((*(connections))[i]);
+	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_SESSIONS)
+            std::cout << "Closed Connections" << std::endl;
 
-      delete this;
-
-      if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_SESSIONS)
-            std::cout << "Cleared session memorey" << std::endl;
-
-      IBSSS_STREAM_CONNECTION_MUTEX.unlock();
+	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_SESSIONS)
+      std::cout << "Terminated Stream" << std::endl;
+      
+	IBSSS_STREAM_CONNECTION_MUTEX.unlock();
 }
 		
 /*
@@ -86,12 +83,12 @@ Returns:
 */
 void Stream_Handle::processStream(Stream_Handle * stream_handle, std::vector<int> * connections){
       int read_status, write_status;
-	while (stream_handle.isStreaming()){ 
+	while (stream_handle->isStreaming()){ 
 
 		//capture image
 
 	      IBSSS_STREAM_CONNECTION_MUTEX.lock();
-		for (int i = 0; i < connections->size(); i++){
+		for (unsigned int i = 0; i < connections->size(); i++){
 
 		}
 
@@ -109,11 +106,11 @@ Arguments:
 Returns:
 	none
 */
-void Stream_Handle::addConnection(int descritpor){
+void Stream_Handle::addConnection(int descriptor){
 
 	IBSSS_STREAM_CONNECTION_MUTEX.lock();
 	
-	connections->pushback(descriptor);
+	connections->push_back(descriptor);
 
 	IBSSS_STREAM_CONNECTION_MUTEX.unlock();
 
@@ -131,10 +128,10 @@ Returns:
 */
 void Stream_Handle::initStreamSession(){
 
-      int secured_status = 0;
-      int streaming = 1;
+      secured_status = 0;
+      streaming = 1;
 	connections = new std::vector<int>();
-	thread_handle = new std::thread(&Client_Handle::processStream, this, this);
+	thread_handle = new std::thread(&Stream_Handle::processStream, this, this, connections);
 
 
 }
@@ -149,7 +146,16 @@ Arguments:
 Returns:
 	none
 */
-void Stream_Handle::setAESKey(std::string key);
+void Stream_Handle::setAESKey(std::string key){
+
+      AES_key.assign(key);
+
+      if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_OPERATIONS)
+            std::cout
+            << "stream assigned key: "
+            << AES_key
+            << std::endl;
+}
 
 /*
 isStreaming()
@@ -161,6 +167,6 @@ Arguments:
 Returns:
       int streaming status
 */
-int isStreaming(){
+int Stream_Handle::isStreaming(){
 	return streaming;
 }

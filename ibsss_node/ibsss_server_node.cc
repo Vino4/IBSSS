@@ -8,8 +8,8 @@ Authors:
 Matt Almenshad | Andrew Gao | Jenny Horn 
 */
 
-#include "ibsss_client_handler.hh"
-#include "ibsss_server.hh"
+#include "ibsss_stream_handler.hh"
+#include "ibsss_server_node.hh"
 #include "ibsss_op_codes.hh"
 #include <stdio.h>
 #include <stdlib.h>
@@ -22,8 +22,6 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <bitset>
 #include <vector>
 #include <thread>
-#include <sqlite3.h> 
-#include <ibsss_database.h> 
 #include <ibsss_session_token.h> 
 #include <signal.h>
 #include <ibsss_mutex.hh>
@@ -41,19 +39,19 @@ void ibsssSignalHandler(int signal_number){
 }
 
 /*
-Server_Node_Handler::Server_Node_Handler()
+Server_Node_Handle::Server_Node_Handle()
 
-Creates a Server_Node_Handler
+Creates a Server_Node_Handle
 
 Arguments:
 	none
 Returns:
       none
 */
-Server_Node_Handler::Server_Node_Handler(){}
+Server_Node_Handle::Server_Node_Handle(){}
 
 /*
-Server_Node_Handler::shutdown()
+Server_Node_Handle::shutdown()
 
 Shut the server down.
 Can be called with Ctrl + C interruption.
@@ -63,24 +61,20 @@ Arguments:
 Returns:
       none
 */
-void Server_Node_Handler::shutdown(){
+void Server_Node_Handle::shutdown(){
 	IBSSS_SERVER_IS_ALIVE = 0;
 	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_TERMINATION)
 		std::cout << "\n\n{[=-....Terminating Server....-=]}" << std::endl;
 	close(main_socket);
 	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_TERMINATION)
 		std::cout << "\n\n{[=-....Closed Main Socket....-=]}" << std::endl;
-	while(connections.size() > 0)
-		connections[0]->killSession();
+	stream_handle.killSession();
 	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_TERMINATION)
 		std::cout << "\n\n{[=-....All Connections Have Been Terminated....-=]}" << std::endl;
-	database_handle.close();
-	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_TERMINATION)
-		std::cout << "\n\n{[=-....Closed Database Connection....-=]}" << std::endl;
 }
 
 /*
-Server_Node_Handler::setDescriptor(int descriptor)
+Server_Node_Handle::setDescriptor(int descriptor)
 
 Sets the server socket descriptor;
 Will be used later to write to, read from and maanage the main server socket.
@@ -90,12 +84,12 @@ Arguments:
 Returns:
       none
 */
-void Server_Node_Handler::setDescriptor(int descriptor){
+void Server_Node_Handle::setDescriptor(int descriptor){
 	main_socket = 0;
 }
 
 /*
-Server_Node_Handler::init()
+Server_Node_Handle::init()
 
 Initalizes the server by
 	- Initalizing srand()
@@ -108,7 +102,7 @@ Arguments:
 Returns:
       none
 */
-void Server_Node_Handler::init(int port){
+void Server_Node_Handle::init(int port){
 	
 	std::cout << "{[=-....Initializing Server....-=]}" << std::endl;
 	
@@ -144,7 +138,7 @@ void Server_Node_Handler::init(int port){
 	std::cout << "Done" << std::endl;
 	
 	std::cout << "[Server Initializer]: Starting Connection Manager..";
-	thread_handle = new std::thread(&Server_Node_Handler::runConnectionManager, this, this);	
+	thread_handle = new std::thread(&Server_Node_Handle::runConnectionManager, this, this);	
 	std::cout << "Done" << std::endl;
 
 	std::cout << "[Server Initializer]: Fully Initialized Server" << std::endl;
@@ -166,7 +160,7 @@ Arguments:
 Returns:
       none
 */
-void Server_Node_Handler::runConnectionManager(Server_Node_Handler * server_handle){
+void Server_Node_Handle::runConnectionManager(Server_Node_Handle * server_handle){
 
 	IBSSS_SERVER_IS_ALIVE = 1;
 
@@ -174,7 +168,6 @@ void Server_Node_Handler::runConnectionManager(Server_Node_Handler * server_hand
 	struct sockaddr_in client_address;
 	socklen_t client_address_size;
 
-	stream_handle = new Stream_Handle();
 	stream_handle.initStreamSession();
 
 	while (IBSSS_SERVER_IS_ALIVE){
@@ -182,10 +175,10 @@ void Server_Node_Handler::runConnectionManager(Server_Node_Handler * server_hand
 								, &client_address_size)) < 0)
 			ibsssError("failed to accept incoming connection");
 	
-	addConnection(client_descriptor) 
+		stream_handle.addConnection(client_descriptor); 
 	
-	if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_SESSIONS)
-	            std::cout << "Fully Initiated Session: [" << client_descriptor << "]\n" << std::endl;		
+		if (IBSSS_DEBUG_MESSAGES && IBSSS_TRACE_SESSIONS)
+		std::cout << "Fully Initiated Session: [" << client_descriptor << "]\n" << std::endl;		
 	}
 
 }

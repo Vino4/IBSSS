@@ -83,7 +83,7 @@ class Stream_Handle{
 		Returns:
 			none
 		*/
-		void killSession(int);
+		void killSession();
 		
 		/*
 		processStream()
@@ -95,7 +95,7 @@ class Stream_Handle{
 		Returns:
 			none
 		*/
-		void processStream();
+		void processStream(Stream_Handle * stream_handle, std::vector<int> * connections);
 		
 		/*
 		addConnection()
@@ -107,7 +107,7 @@ class Stream_Handle{
 		Returns:
 			none
 		*/
-		void addConnection(int descritpor)
+		void addConnection(int descritpor);
 
 		/*
 		initStreamSession()

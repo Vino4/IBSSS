@@ -12,3 +12,5 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <mutex>
 
 std::mutex IBSSS_KILL_SESSION_MUTEX;
+std::mutex IBSSS_STREAM_CONNECTION_MUTEX;
+

@@ -1,9 +1,8 @@
 #ifndef _IBSSS_NODE_SERVER_HEADER
 #define _IBSSS_NODE_SERVER_HEADER
 
-#include "ibsss_database_handler.hh"
-#include "ibsss_client_handler.hh"
-#include "ibsss_server.hh"
+#include "ibsss_stream_handler.hh"
+#include "ibsss_server_node.hh"
 #include "ibsss_op_codes.hh"
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,8 +15,6 @@
 #include <bitset>
 #include <vector>
 #include <thread>
-#include <sqlite3.h> 
-#include <ibsss_database.h> 
 #include <ibsss_session_token.h> 
 #include <signal.h>
 #include <ibsss_mutex.hh>
