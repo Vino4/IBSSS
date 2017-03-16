@@ -17,14 +17,14 @@ using std::string;
 
 #include <rsa.h>
 
-std::string encrypt_decrypt(std::string plaintext, byte key[KEY_SIZE], byte iv[NONCE_SIZE]) {
+std::string encrypt_decrypt(std::string plaintext, byte key[IBSSS_KEY_SIZE], byte iv[IBSSS_NONCE_SIZE]) {
 
     byte *plaintextBytes = (byte *) plaintext.c_str();
     byte *ciphertextBytes = new byte[plaintext.length()];
     std::string ciphertext;
 
     Salsa20::Encryption salsa;
-    salsa.SetKeyWithIV(key, KEY_SIZE, iv);
+    salsa.SetKeyWithIV(key, IBSSS_KEY_SIZE, iv);
 
     salsa.ProcessData(ciphertextBytes, plaintextBytes, plaintext.length());
     ciphertext.assign((char *) ciphertextBytes);
@@ -32,15 +32,15 @@ std::string encrypt_decrypt(std::string plaintext, byte key[KEY_SIZE], byte iv[N
     return ciphertext;
 }
 
-void generate_random_key(byte key[KEY_SIZE]) {
+void generate_random_key(byte key[IBSSS_KEY_SIZE]) {
     AutoSeededRandomPool prng;
-    prng.GenerateBlock(key, KEY_SIZE);
+    prng.GenerateBlock(key, IBSSS_KEY_SIZE);
 }
 
 
-void generate_random_iv(byte iv[NONCE_SIZE]) {
+void generate_random_iv(byte iv[IBSSS_NONCE_SIZE]) {
     AutoSeededRandomPool prng;
-    prng.GenerateBlock(iv, NONCE_SIZE);
+    prng.GenerateBlock(iv, IBSSS_NONCE_SIZE);
 }
 
 

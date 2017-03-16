@@ -10,6 +10,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include "ibsss_restrictions.h"
 #include "ibsss_server_connection_handler.hh"
 #include "ibsss_op_codes.hh"
+#include "ibsss_crypto.hh"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,27 +28,27 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 
 int Server_Connection_Handle::operationHello(){
 	
-	unsigned char AES_key[4096];
-	unsigned int length = 4;
+	unsigned char AES_key[IBSSS_KEY_SIZE];
+	unsigned int length;
 	int read_status, write_status;
 	char operation_status;
 
 	//TODO: generate AES key and send it
-	// make a fake AES key for now
-	AES_key[0] = '1';
-	AES_key[1] = '2';
-	AES_key[2] = '3';
-	AES_key[3] = '\0';
+    generate_random_key(AES_key);
 
+    std::string AES_key_str = std::string(AES_key, AES_key+4);
 	// Remeber the AES key
-	setAESKey(std::string(AES_key, AES_key+4));
+	setAESKey(AES_key_str);
+
+    std::string AES_key_encrypted_str = RSA_encrypt(AES_key_str);
+    length = AES_key_encrypted_str.length();
 
 	// Send Op Code to server
 	ibsssWriteMessage(server_connection_descriptor, &IBSSS_OP_HELLO, 1, write_status);
 
 	// send length and aes_key
 	ibsssWriteMessage(server_connection_descriptor, &length, sizeof(length), write_status);
-	ibsssWriteMessage(server_connection_descriptor, AES_key, length, write_status);
+	ibsssWriteMessage(server_connection_descriptor, &AES_key_encrypted_str[0], length, write_status);
 
 	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
 

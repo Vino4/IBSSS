@@ -17,14 +17,14 @@ using std::endl;
 #include <rsa.h>
 
 
-#define KEY_SIZE 32
-#define NONCE_SIZE 8
+#define IBSSS_KEY_SIZE 32
+#define IBSSS_NONCE_SIZE 8
 
-std::string encrypt_decrypt(std::string plaintext, byte key[KEY_SIZE], byte iv[NONCE_SIZE]);
+std::string encrypt_decrypt(std::string plaintext, byte key[IBSSS_KEY_SIZE], byte iv[IBSSS_NONCE_SIZE]);
 
-void generate_random_key(byte key[KEY_SIZE]); 
+void generate_random_key(byte key[IBSSS_KEY_SIZE]);
 
-void generate_random_iv(byte iv[NONCE_SIZE]); 
+void generate_random_iv(byte iv[IBSSS_NONCE_SIZE]);
 
 std::string RSA_encrypt(std::string plaintext); 
 
