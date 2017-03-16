@@ -305,6 +305,21 @@ void Client_Handle::establishLoggedinStatus(){
 }
 
 /*
+getAESKey(std::string key)
+
+returns the symetric encryption key
+
+Arguments:
+    none
+Returns:
+    - std::string key, the symetric AES key
+*/
+std::string Client_Handle::getAESKey(){
+    return AES_key;
+
+}
+
+/*
 Client_Handle::setAESKey(std::string key)
 
 Sets the symetric encryption key    

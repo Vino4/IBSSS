@@ -97,6 +97,17 @@ class Client_Handle{
 		void killSession();
 		
 		/*
+		getAESKey(std::string key)
+
+		returns the symetric encryption key
+
+		Arguments:
+			none
+		Returns:
+			- std::string key, the symetric AES key
+		*/
+		std::string getAESKey();
+		/*
 		processConnection()
 		
 		Reads messages from the clients and responds by calling the appropriate handler functions.

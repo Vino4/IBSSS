@@ -184,7 +184,7 @@ int Server_Connection_Handle::operationLogin(std::string username, std::string p
 	// read what server returns
 	ibsssReadMessage(server_connection_descriptor, &operation_status, 1, read_status);
 
-	switch (operation_status) {
+	switch (operation_status) { 
 		case IBSSS_OP_SUCCESS:
 			session_token.resize(IBSSS_SESSION_TOKEN_LENGTH);
 			
