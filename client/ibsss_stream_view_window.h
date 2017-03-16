@@ -40,6 +40,7 @@ private slots:
     void on_changeImageButton_clicked();
     void on_changePasswordButton_clicked();
     void enableOptions();
+    void toggle_MS_MUS(int page);
 
 private:
     Ui::IBSSS_Stream_View_Window_Layout *ui;

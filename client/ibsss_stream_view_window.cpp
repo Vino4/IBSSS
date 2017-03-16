@@ -58,6 +58,12 @@ IBSSS_Stream_View_Window::IBSSS_Stream_View_Window(QApplication *parent, Server_
 
     connect(backs, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(backToStreamview()));
 
+
+    /*
+     * MANAGE USERS
+     *
+     */
+
     //hard-coded sample list of users to fill list view in Manage Users page
     userlist << "user1" << "user2" << "user3" << "user4" << "user5" << "user6";
 
@@ -68,6 +74,20 @@ IBSSS_Stream_View_Window::IBSSS_Stream_View_Window(QApplication *parent, Server_
         ui->userList->insertItem(i, userlist[i]);
     }
     connect(ui->userList, SIGNAL(itemSelectionChanged()), this, SLOT(enableOptions()));
+
+    /*
+     * MANAGE STREAMS
+     *
+     */
+
+    //fill ui->streamsList with list of streams
+    //This is a hard-coded example of a list of streams, for demonstrational purposes
+
+    ui->streamsList->insertItem(0, "stream 1");
+    ui->streamsList->insertItem(1, "stream 2");
+
+    connect(ui->ms_mngUsers_button, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(toggle_MS_MUS(2));
+    connect(ui->ms_mngUsers_button, SIGNAL(buttonClicked(QAbstractButton*)), this, SLOT(toggle_MS_MUS(3));
 
 }
 
@@ -219,4 +239,9 @@ void IBSSS_Stream_View_Window::enableOptions()
         ui->lmu_pwreset_button->setEnabled(false);
     }
 
+}
+
+void IBSSS_Stream_View_Window::toggle_MS_MUS(int page)
+{
+    ui->stackedWidget->setCurrentIndex(page);
 }
