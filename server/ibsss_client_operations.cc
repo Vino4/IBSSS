@@ -337,18 +337,25 @@ void Client_Handle::operationLogout() {
 		return;
 	}
 
-	char received_session_token[IBSSS_SESSION_TOKEN_LENGTH];
+	std::string session_token_encrypt;
+	unsigned char received_iv[IBSSS_NONCE_SIZE];
 
+	//read the IV
+	ibsssReadMessage(client_descriptor, received_iv, IBSSS_NONCE_SIZE, read_status);
 
-	//read the session token, if operation fails issue ibsssError	
-	ibsssReadMessage(client_descriptor, received_session_token, IBSSS_SESSION_TOKEN_LENGTH, read_status);
+	//read the session token, if operation fails issue ibsssError
+	session_token_encrypt.resize(IBSSS_SESSION_TOKEN_LENGTH);
+	ibsssReadMessage(client_descriptor, &session_token_encrypt[0], IBSSS_SESSION_TOKEN_LENGTH, read_status);
+
+	//decrypt the session token
+	std::string session_token_decrypt(encrypt_decrypt(session_token_encrypt, (unsigned char *) (&(getAESKey()[0])), received_iv), 0, IBSSS_SESSION_TOKEN_LENGTH);
 
 	//put string termination character at the end of the string	
-	received_session_token[IBSSS_SESSION_TOKEN_LENGTH] = '\0';		
+	session_token_decrypt[IBSSS_SESSION_TOKEN_LENGTH] = '\0';		
 
-	ibsssAnnounceMessage(getSessionToken(), IBSSS_SESSION_TOKEN_LENGTH, session_token);
+	ibsssAnnounceMessage(getSessionToken(), IBSSS_SESSION_TOKEN_LENGTH, session_token_decrypt);
 
-	if(std::string(received_session_token) == getSessionToken()){
+	if(session_token_decrypt == getSessionToken()){
 		ibsssWriteMessage(client_descriptor, &IBSSS_OP_SUCCESS, 1, write_status);
 		establishLoggedoutStatus();
 		return;	
@@ -455,9 +462,13 @@ void Client_Handle::operationChangePassword(){
 		return;
 	}
 	
-	char username[256];
-	char old_password[256];
-	char new_password[256];
+	// char username[256];
+	// char old_password[256];
+	// char new_password[256];
+
+	std::string username_encrypt;
+	std::string old_password_encrypt;
+	std::string new_password_encrypt;
 
 	int username_length;
 	int old_password_length;
@@ -465,22 +476,35 @@ void Client_Handle::operationChangePassword(){
 
 	int operation_successful = 0;
 
+	unsigned char received_iv[IBSSS_NONCE_SIZE];	
+
+	//read the IV
+	ibsssReadMessage(client_descriptor, received_iv, IBSSS_NONCE_SIZE, read_status);
+
 	//read the length of the username, if operation fails issue ibsssError	
 	ibsssReadMessage(client_descriptor, &username_length, 4, read_status);
 
-	//read the username 
-	ibsssReadMessage(client_descriptor, username, username_length, read_status);
+	//read the username
+	username_encrypt.resize(username_length);
+	ibsssReadMessage(client_descriptor, &username_encrypt[0], username_length, read_status);
+
+	// decrypt the username
+	std::string username(encrypt_decrypt(username_encrypt, (unsigned char *) (&(getAESKey()[0])), received_iv), 0, username_length);
 	
 	//put string termination character at the end of the string	
 	username[username_length] = '\0';		
 
 	ibsssAnnounceMessage(getSessionToken(), username_length, username);
 
-	//read the length of the old password, if operation fails issue ibsssError	
+	//read the length of the old password, if operation fails issue ibsssError
 	ibsssReadMessage(client_descriptor, &old_password_length, 4, read_status);
 
-	//read the password 
-	ibsssReadMessage(client_descriptor, old_password, old_password_length, read_status);
+	//read the old password 
+	old_password_encrypt.resize(old_password_length);
+	ibsssReadMessage(client_descriptor, &old_password_encrypt[0], old_password_length, read_status);
+
+	//decrypt the old password
+	std::string old_password(encrypt_decrypt(old_password_encrypt, (unsigned char *) (&(getAESKey()[0])), received_iv), 0, old_password_length);
 	
 	//put string termination character at the end of the string	
 	old_password[old_password_length] = '\0';		
@@ -491,7 +515,11 @@ void Client_Handle::operationChangePassword(){
 	ibsssReadMessage(client_descriptor, &new_password_length, 4, read_status);
 
 	//read the new password 
-	ibsssReadMessage(client_descriptor, new_password, new_password_length, read_status);
+	new_password_encrypt.resize(new_password_length);
+	ibsssReadMessage(client_descriptor, &new_password_encrypt[0], new_password_length, read_status);
+
+	//decrypt the new password
+	std::string new_password(encrypt_decrypt(new_password_encrypt, (unsigned char *) (&(getAESKey()[0])), received_iv), 0, new_password_length);
 	
 	//put string termination character at the end of the string	
 	new_password[new_password_length] = '\0';		
