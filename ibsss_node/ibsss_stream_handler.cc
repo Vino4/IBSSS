@@ -24,6 +24,9 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <ibsss_mutex.hh>
 #include <algorithm>
 #include <ibsss_error.hh>
+#include <opencv2/opencv.hpp>
+#include <chrono>
+using namespace cv;
 
 /*
 Stream_Handle()
@@ -84,13 +87,65 @@ Returns:
 void Stream_Handle::processStream(Stream_Handle * stream_handle, std::vector<int> * connections){
       int read_status, write_status;
 	while (stream_handle->isStreaming()){ 
+		
+            IBSSS_STREAM_CONNECTION_MUTEX.lock();
 
-		//capture image
+		// temporary solution, use ssh to stream
+/*           
+		 if (connections->size() > 0){
+             
+            	cap >> frame;
+                  imwrite("stream.jpg", frame);
+			for (unsigned int i = 0; i < connections->size(); i++ ) 
+                        close((*(connections))[i]);
+            }
+*/
+/*		
+		//encode image into jpg
+		vector<uchar> buf;
+		imencode(".jpg", frame, buf, std::vector<int>() );
 
-	      IBSSS_STREAM_CONNECTION_MUTEX.lock();
-		for (unsigned int i = 0; i < connections->size(); i++){
+		unsigned char * byteBuf = (unsigned char *) realloc(byteBuf, buf.size());
+		memcpy(byteBuf, &buf[0], buf.size());
+*/
 
-		}
+		// encoded image is now in buf (a vector)
+		//imageBuf = (unsigned char *) realloc(imageBuf, buf.size());
+		//memcpy(imageBuf, &buf[0], buf.size());
+		//  size of imageBuf is buf.size();
+
+
+//		std::cout << "size: " << buf.size() << std::endl;
+//		unsigned long long data_size = buf.size();
+
+	
+//		Mat LoadedBuf = Mat(480, 640, CV_8U, byteBuf);
+//		Mat decodedImage = imdecode(LoadedBuf, CV_LOAD_IMAGE_COLOR);
+
+//		imwrite("image44.png", decodedImage);
+
+//		std::cout << "IMAGE: ";
+//		for (unsigned int i = 0; i < buf.size(); i++)
+//			  std::cout << std::hex << buf[i];
+//		std::cout << std::endl;
+		
+	//	std::string lol;
+
+	//	for (unsigned int i = 0; i < connections->size(); i++){
+	//		std::cin >> lol;
+	//		ibsssStreamerWriteMessage(i, ((*(connections))[i]), &data_size, sizeof(data_size), write_status);
+	//		ibsssStreamerWriteMessage(i, ((*(connections))[i]), byteBuf, data_size, write_status);	
+	//		close(((*(connections))[i]));
+	//		connections->erase(connections->begin() + i);
+	//	}
+
+		//	ibsssStreamerWriteMessage(i, ((*(connections))[i]), &testy, 1, write_status);
+		//	ibsssStreamerWriteMessage(i, ((*(connections))[i]), &testy, 1, write_status);
+		//	ibsssStreamerWriteMessage(i, ((*(connections))[i]), &testy, 1, write_status);
+		//	ibsssStreamerWriteMessage(i, ((*(connections))[i]), &testy, 1, write_status);
+		//	ibsssStreamerWriteMessage(i, ((*(connections))[i]), &testy, 1, write_status);
+			//ibsssStreamerWriteMessage(i, ((*(connections))[i]), frame.data, data_size, write_status);
+	//	}
 
 	      IBSSS_STREAM_CONNECTION_MUTEX.unlock();
 	}
@@ -128,8 +183,16 @@ Returns:
 */
 void Stream_Handle::initStreamSession(){
 
-      secured_status = 0;
+      cap.open(0);
+	if(!cap.isOpened())
+		ibsssError("No Camera Detected");
+      
+	cap.set(CV_CAP_PROP_FRAME_WIDTH,640);
+	cap.set(CV_CAP_PROP_FRAME_HEIGHT,480);
+      
+	secured_status = 0;
       streaming = 1;
+	
 	connections = new std::vector<int>();
 	thread_handle = new std::thread(&Stream_Handle::processStream, this, this, connections);
 

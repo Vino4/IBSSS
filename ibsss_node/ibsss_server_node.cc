@@ -26,6 +26,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <signal.h>
 #include <ibsss_mutex.hh>
 #include <algorithm>
+#include <errno.h>
 
 volatile sig_atomic_t IBSSS_SERVER_IS_ALIVE = 1;
 
@@ -127,7 +128,7 @@ void Server_Node_Handle::init(int port){
 	std::cout << "[Server Initializer]: Initializing Listener..";
 	if (listen(main_socket, IBSSS_MAXIMUM_BENDING_CONNECTIONS) < 0)
 		ibsssError("\nlistening to main socket failed");
-	std::cout << "Done" << std::endl;
+	std::cout << "Done (socket [" << main_socket  <<"])" << std::endl;
 	
 	std::cout << "[Server Initializer]: Setting signal handlers..";
 	if (signal(SIGINT, ibsssSignalHandler) == SIG_ERR)
@@ -166,14 +167,18 @@ void Server_Node_Handle::runConnectionManager(Server_Node_Handle * server_handle
 
 	int client_descriptor;
 	struct sockaddr_in client_address;
-	socklen_t client_address_size;
+	socklen_t client_address_size = sizeof(client_address);
 
 	stream_handle.initStreamSession();
 
 	while (IBSSS_SERVER_IS_ALIVE){
+		std::cout << "Accepting connections on socket: " << main_socket << std::endl;
 		if ((client_descriptor = accept(main_socket, (struct sockaddr *) &client_address
-								, &client_address_size)) < 0)
-			ibsssError("failed to accept incoming connection");
+								, &client_address_size)) < 0){
+			std::cout << "failed to accept connection on socket [" << main_socket << "]" << std::endl
+				  << "ERROR: " << errno << std:: endl;
+			continue;
+		}
 	
 		stream_handle.addConnection(client_descriptor); 
 	

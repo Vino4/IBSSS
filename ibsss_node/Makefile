@@ -5,7 +5,7 @@ CFLAGS = -std=c++11 -Wall -c $(DEBUG)
 LFLAGS = -std=c++11 -Wall $(DEBUG)
 server_node_dir =
 spec_dir = ../specifications/
-SERVER_NODE_LIBRARIES = -lpthread
+SERVER_NODE_LIBRARIES = -lpthread -lopencv_highgui -lopencv_core -lopencv_imgproc -lopencv_objdetect
 server_node_inc = -I../specifications
 EXECUTABLES = Server
 

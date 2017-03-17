@@ -27,8 +27,38 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 #include <ibsss_mutex.hh>
 #include <algorithm>
 #include <ibsss_error.hh>
+#include <opencv2/opencv.hpp>
 
-#define ibsssConnectionDropped(statement) std::cout << statement << std::endl; break
+using namespace cv;
+
+#define ibsssConnectionDropped(statement) std::cout << statement << std::endl; break;
+
+#define ibsssStreamerReadMessage(index, descriptor, buffer, length, status)		\
+												\
+	if ((status = read(descriptor, buffer, length)) < 0){			\
+		std::cout << "Connection Dropped: " << descriptor << std::endl;		\
+		connections->erase(connections->begin() + index);			\
+		continue;									\
+	}											\
+												\
+	if (IBSSS_TRACE_READ_WRITE_STATUS)						\
+		std::cout << "Read Status: " << status << std::endl;		\
+												\
+	if (status == 0)									\
+		continue;
+
+#define ibsssStreamerWriteMessage(index, descriptor, buffer, length, status)		\
+												\
+	if ((status = write(descriptor, buffer, length)) < 0){		\
+		std::cout << "Connection Dropped: " << descriptor << std::endl;		\
+		connections->erase(connections->begin() + index);			\
+		continue;									\
+	}											\
+	if (IBSSS_TRACE_READ_WRITE_STATUS)						\
+		std::cout << "Write Status: " << status << std::endl;		\
+												\
+	if (status == 0)									\
+		continue;
 
 #define ibsssReadMessage(descriptor, buffer, length, status)		\
 												\
@@ -51,6 +81,7 @@ Matt Almenshad | Andrew Gao | Jenny Horn
 												\
 	if (status == 0)									\
 		return;
+
 
 /*
 Stream Handle classs
@@ -146,7 +177,9 @@ class Stream_Handle{
             int isStreaming();
 
 	private:
-		
+
+		Mat frame;
+		VideoCapture cap;
 		std::vector<int> * connections;
 		std::thread * thread_handle;
 		std::string AES_key;
