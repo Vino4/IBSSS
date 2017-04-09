@@ -11,10 +11,11 @@
 #include <QDataStream>
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <QTimer>
 
 using namespace cv;
 
-bool testing_bool = true;
+int testing_bool = 0;
 
 // We tried multiple ways of rendering the footage, this is the fastest we managed to create
 // the we decided not to use ::scaled do to it's slow performance, this decided was inspired by the following stackoverflow post
@@ -29,6 +30,21 @@ Stream_Display::Stream_Display(QWidget *parent) : QWidget(parent) {
   frame_buffer = new QImage();
   frame = 0;
   setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
+  if(testing_bool == 0){
+      loadFrameToBuffer("frame1.png");
+      displayFrameFromBuffer();
+      testing_bool++;
+  } else if (testing_bool == 1) {
+      loadFrameToBuffer("frame2.png");
+      testing_bool++;
+  } else if (testing_bool == 3) {
+      loadFrameToBuffer("frame2.png");
+      displayFrameFromBuffer();
+      testing_bool++;
+  }
+  QTimer::singleShot(5000, this, SLOT(gotcha()));
+
 }
 
 void Stream_Display::displayFrameFromBuffer() {
@@ -37,22 +53,19 @@ void Stream_Display::displayFrameFromBuffer() {
 }
 
 void Stream_Display::paintEvent(QPaintEvent*) {
-  /*  testing_bool = (!testing_bool);
-    if(testing_bool){
-        loadFrameToBuffer("bowlofcereal.jpeg");
-        displayFrameFromBuffer();
-    } else {
-        loadFrameToBuffer("cereal.jpeg");
-        displayFrameFromBuffer();
-    }*/
+    displayFrameFromBuffer();
+
   if (!frame) { return; }
   QPainter painter(this);
   painter.drawImage(rect(), *frame, frame->rect());
 }
 
 void Stream_Display::gotcha(){
+    displayFrameFromBuffer();
+    repaint();
     QMessageBox::information(this, "KENNACTED",
     QString("FAK YEEE"));
+
 }
 
 void Stream_Display::isReadReady(){

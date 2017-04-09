@@ -133,7 +133,7 @@ int Server_Connection_Handle::operationCreateUser(std::string username, std::str
 						read_status);
             
 			// decrypt the session token
-			std::string session_token(encrypt_decrypt(received_session_token, (unsigned char *) (&(getAESKey()[0])), received_iv), 0, IBSSS_SESSION_TOKEN_LENGTH);
+            session_token = std::string(encrypt_decrypt(received_session_token, (unsigned char *) (&(getAESKey()[0])), received_iv), 0, IBSSS_SESSION_TOKEN_LENGTH);
 			std::cout << "got session token: " << session_token << std::endl;
 			setSessionToken(session_token);
 			establishLoggedinStatus();
@@ -198,7 +198,7 @@ int Server_Connection_Handle::operationLogin(std::string username, std::string p
 			ibsssReadMessage(server_connection_descriptor, &received_session_token[0], IBSSS_SESSION_TOKEN_LENGTH, 
 						read_status);
 
-			std::string session_token(encrypt_decrypt(received_session_token, (unsigned char *) (&(getAESKey()[0])), received_iv), 0, IBSSS_SESSION_TOKEN_LENGTH);
+            session_token = std::string(encrypt_decrypt(received_session_token, (unsigned char *) (&(getAESKey()[0])), received_iv), 0, IBSSS_SESSION_TOKEN_LENGTH);
 			std::cout << "got session token: " << session_token << std::endl;
 			setSessionToken(session_token);
 						
